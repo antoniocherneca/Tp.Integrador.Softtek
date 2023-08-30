@@ -21,13 +21,13 @@ namespace Tp.Integrador.Softtek.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(Project projects)
+        public IActionResult Post(ProjectDto projects)
         {
             return Ok();
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Service updatedProject)
+        public IActionResult Put(int id, ServiceDto updatedProject)
         {
             return Ok();
         }

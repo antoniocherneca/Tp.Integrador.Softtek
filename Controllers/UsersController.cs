@@ -21,13 +21,13 @@ namespace Tp.Integrador.Softtek.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(User users)
+        public IActionResult Post(UserDto users)
         {
             return Ok();
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, User updatedUsers)
+        public IActionResult Put(int id, UserDto updatedUsers)
         {
             return Ok();
         }

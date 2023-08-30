@@ -21,13 +21,13 @@ namespace Tp.Integrador.Softtek.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(Job jobs)
+        public IActionResult Post(JobDTO jobs)
         {
             return Ok();
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Job updatedJobs)
+        public IActionResult Put(int id, JobDTO updatedJobs)
         {
             return Ok();
         }
