@@ -2,7 +2,6 @@
 {
     public class JobDTO
     {
-        public int JobId { get; set; }
         public DateTime JobDate { get; set; }
         public int ProjectId { get; set; }
         public int ServiceId { get; set; }

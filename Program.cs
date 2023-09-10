@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using Tp.Integrador.Softtek.DataAccess;
+using Tp.Integrador.Softtek.DataAccess.Repositories;
+using Tp.Integrador.Softtek.DataAccess.Repositories.Interfaces;
+
 namespace Tp.Integrador.Softtek
 {
     public class Program
@@ -7,11 +12,20 @@ namespace Tp.Integrador.Softtek
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<ApplicationDbContext>(
+                options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection")
+            );
+            builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+            builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
+            builder.Services.AddScoped<IJobsRepository, JobsRepository>();
+            builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
+            builder.Services.AddScoped<IRolesRepository, RolesRepository>();
+            builder.Services.AddScoped<IProjectStatusesRepository, ProjectStatusesRepository>();
 
             var app = builder.Build();
 
@@ -25,7 +39,6 @@ namespace Tp.Integrador.Softtek
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
