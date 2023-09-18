@@ -24,8 +24,8 @@ namespace Tp.Integrador.Softtek
             builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
             builder.Services.AddScoped<IJobsRepository, JobsRepository>();
             builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
-            builder.Services.AddScoped<IRolesRepository, RolesRepository>();
-            builder.Services.AddScoped<IProjectStatusesRepository, ProjectStatusesRepository>();
+
+            builder.Services.AddAutoMapper(typeof(MappingConfig));
 
             var app = builder.Build();
 

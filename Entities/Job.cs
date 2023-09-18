@@ -26,12 +26,24 @@ namespace Tp.Integrador.Softtek.Entities
         [Column(TypeName = "MONEY")]
         public double Cost { get; set; }
 
-        //[ForeignKey("ProjectId")]
-        //[Required]
-        //public Project Project { get; set; }
+        [Required]
+        [Column(TypeName = "INT")]
+        public int ProjectId { get; set; }
 
-        //[ForeignKey("ServiceId")]
-        //[Required]
-        //public Service Service { get; set; }
+        [Required]
+        [Column(TypeName = "INT")]
+        public int ServiceId { get; set; }
+
+        [ForeignKey("ProjectId")]
+        [Required]
+        public Project Project { get; set; }
+
+        [ForeignKey("ServiceId")]
+        [Required]
+        public Service Service { get; set; }
+
+        [Required]
+        [Column(TypeName = "BIT")]
+        public bool IsActive { get; set; }
     }
 }

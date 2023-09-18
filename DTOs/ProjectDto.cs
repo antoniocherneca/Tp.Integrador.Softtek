@@ -1,10 +1,14 @@
-﻿namespace Tp.Integrador.Softtek.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace Tp.Integrador.Softtek.Entities
 {
     public class ProjectDto
     {
+        public int ProjectId { get; set; }
         public string ProjectName { get; set; }
         public string Address { get; set; }
-        public int ProjectStatus { get; set; }
-        public string Password { get; set; }
+        public byte Status { get; set; }
+        public bool IsActive { get; set; }
     }
 }

@@ -15,11 +15,11 @@ namespace Tp.Integrador.Softtek.Entities
         public string Description { get; set; }
 
         [Required]
-        [Column(TypeName = "BIT")]
-        public bool ServiceStatus { get; set; }
-
-        [Required]
         [Column(TypeName = "MONEY")]
         public double HourValue { get; set; }
+
+        [Required]
+        [Column(TypeName = "BIT")]
+        public bool IsActive { get; set; }
     }
 }

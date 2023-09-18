@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Tp.Integrador.Softtek.DataAccess.Repositories;
 using Tp.Integrador.Softtek.DataAccess.Repositories.Interfaces;
@@ -11,77 +11,111 @@ namespace Tp.Integrador.Softtek.Controllers
     public class ProjectsController : ControllerBase
     {
         private readonly IProjectsRepository _projectsRepository;
+        private readonly IMapper _mapper;
 
-        public ProjectsController(IProjectsRepository projectsRepository)
+        public ProjectsController(IProjectsRepository projectsRepository, IMapper mapper)
         {
             _projectsRepository = projectsRepository;
+            _mapper = mapper;
         }
 
         /// <summary> Obtiene todos los proyectos </summary>
         /// <returns> Lista de todos los proyectos </returns>
         [HttpGet]
-        public IActionResult GetAllProjects()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<ProjectDto>>> GetAllProjects()
         {
-            var projects = _projectsRepository.GetAll();
-            if (projects != null)
-            {
-                return Ok(projects);
-            }
-            return NotFound("No se encontraron proyectos.");
+            IEnumerable<Project> projectsList = await _projectsRepository.GetAll();
+
+            return Ok(_mapper.Map<IEnumerable<ProjectDto>>(projectsList));
         }
 
         /// <summary> Obtiene el proyecto solicitado si es que existe </summary>
         /// <returns> Un proyecto </returns>
-        [HttpGet("{id}")]
-        public IActionResult GetProject(int id)
+        [HttpGet("{id}", Name = "GetProjectId")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ProjectDto>> GetProject(int id)
         {
-            var project = _projectsRepository.GetById(id);
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+
+            var project = await _projectsRepository.GetById(p => p.ProjectId == id);
             if (project != null)
             {
-                return Ok(project);
+                return Ok(_mapper.Map<ProjectDto>(project));
             }
-            return NotFound("No se encontró el proyecto.");
+
+            return NotFound();
         }
 
         /// <summary> Crea un nuevo registro de proyecto </summary>
         /// <returns> Mensaje de confirmación </returns>
         [HttpPost]
-        public IActionResult PostProject(Project project)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<ProjectDto>> PostProject([FromBody] ProjectDto projectDto)
         {
-            _projectsRepository.Create(project);
-            return Created("", project);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (projectDto == null)
+            {
+                return BadRequest(projectDto);
+            }
+
+            Project projectModel = _mapper.Map<Project>(projectDto);
+            await _projectsRepository.Create(projectModel);
+
+            return CreatedAtRoute("GetProjectById", new { id = projectDto.ProjectId }, projectDto);
         }
 
         /// <summary> Modifica un registro de proyecto si es que existe </summary>
         /// <returns> Mensaje de confirmación </returns>
         [HttpPut("{id}")]
-        public IActionResult PutProject(int id, Project updatedProject)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PutProject(int id, [FromBody] ProjectDto projectDto)
         {
-            var project = _projectsRepository.GetById(id);
-            if (project != null)
+            if (projectDto == null || id != projectDto.ProjectId)
             {
-                project.ProjectId = updatedProject.ProjectId;
-                project.ProjectName = updatedProject.ProjectName;
-                project.Address = updatedProject.Address;
-
-                _projectsRepository.Update(project);
-                return Ok("Se actualizó el proyecto correctamente.");
+                return BadRequest();
             }
-            return NotFound("No se encontró el proyecto.");
+
+            Project projectModel = _mapper.Map<Project>(projectDto);
+            await _projectsRepository.Update(projectModel);
+
+            return NoContent();
         }
 
         /// <summary> Elimina un registro de proyecto si es que existe </summary>
         /// <returns> Mensaje de confirmación </returns>
         [HttpDelete("{id}")]
-        public IActionResult DeleteProject(int id)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteProject(int id)
         {
-            var project = _projectsRepository.GetById(id);
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+
+            var project = await _projectsRepository.GetById(p => p.ProjectId == id);
             if (project != null)
             {
-                _projectsRepository.Delete(id);
-                return Ok("Se eliminó el proyecto correctamente.");
+                await _projectsRepository.Delete(project);
+                return NoContent();
             }
-            return NotFound("No se encontró el proyecto.");
+
+            return NotFound();
         }
     }
 }

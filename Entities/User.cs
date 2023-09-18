@@ -19,16 +19,17 @@ namespace Tp.Integrador.Softtek.Entities
         public int Dni { get; set; }
 
         [Required]
-        [Column(TypeName = "INT")]
+        [Column(TypeName = "SMALLINT")]
         public int Type { get; set; }
 
         [Required]
         [Column(TypeName = "VARCHAR(100)")]
         public string Password { get; set; }
 
-        /*[ForeignKey("RoleId")]
         [Required]
-        public Role Role { get; set; }
-        */
+        [Column(TypeName = "BIT")]
+        public bool IsActive { get; set; }
     }
+
+    public enum UserType { Administrador = 1, Consultor = 2}
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Tp.Integrador.Softtek.DataAccess.Repositories;
 using Tp.Integrador.Softtek.DataAccess.Repositories.Interfaces;
@@ -11,79 +11,113 @@ namespace Tp.Integrador.Softtek.Controllers
     public class JobsController : ControllerBase
     {
         private readonly IJobsRepository _jobsRepository;
+        private readonly IMapper _mapper;
 
-        public JobsController(IJobsRepository jobsRepository)
+        public JobsController(IJobsRepository jobsRepository, IMapper mapper)
         {
             _jobsRepository = jobsRepository;
+            _mapper = mapper;
+
         }
 
         /// <summary> Obtiene todos los trabajos </summary>
         /// <returns> Lista de todos los trabajos </returns>
         [HttpGet]
-        public IActionResult GetAllJobs()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<JobDto>>> GetAllJobs()
         {
-            var jobs = _jobsRepository.GetAll();
-            if (jobs != null)
-            {
-                return Ok(jobs);
-            }
-            return NotFound("No se encontraron trabajos.");
+            IEnumerable<Job> jobsList = await _jobsRepository.GetAll();
+
+            return Ok(_mapper.Map<IEnumerable<JobDto>>(jobsList));
         }
 
         /// <summary> Obtiene el trabajo solicitado si es que existe </summary>
         /// <returns> Un trabajo </returns>
-        [HttpGet("{id}")]
-        public IActionResult GetJob(int id)
+        [HttpGet("{id:int}", Name = "GetJobById")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<JobDto>> GetJob(int id)
         {
-            var job = _jobsRepository.GetById(id);
+            if (id == 0)
+            {
+                return BadRequest();
+            }
+
+            var job = await _jobsRepository.GetById(j => j.JobId == id);
             if (job != null)
             {
-                return Ok(job);
+                return Ok(_mapper.Map<JobDto>(job));
             }
-            return NotFound("No se encontró el trabajo.");
+
+            return NotFound();
         }
 
         /// <summary> Crea un nuevo registro de trabajo </summary>
         /// <returns> Mensaje de confirmación </returns>
         [HttpPost]
-        public IActionResult PostJob(Job job)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<ActionResult<JobDto>> PostJob([FromBody] JobDto jobDto)
         {
-            _jobsRepository.Create(job);
-            return Created("", job);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (jobDto == null)
+            {
+                return BadRequest(jobDto);
+            }
+
+            Job jobModel = _mapper.Map<Job>(jobDto);
+            await _jobsRepository.Create(jobModel);
+
+            return CreatedAtRoute("GetJobById", new { id = jobDto.JobId }, jobDto);
         }
 
         /// <summary> Modifica un registro de trabajo si es que existe </summary>
         /// <returns> Mensaje de confirmación </returns>
         [HttpPut("{id}")]
-        public IActionResult PutJob(int id, Job updatedJob)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> PutJob(int id, [FromBody] JobDto jobDto)
         {
-            var job = _jobsRepository.GetById(id);
-            if (job != null)
+            if (jobDto == null || id != jobDto.JobId)
             {
-                job.JobId = updatedJob.JobId;
-                job.JobDate = updatedJob.JobDate;
-                job.NumberOfHours = updatedJob.NumberOfHours;
-                job.HourValue = updatedJob.HourValue;
-                job.Cost = updatedJob.Cost;
-
-                _jobsRepository.Update(job);
-                return Ok("Se actualizó el trabajo correctamente.");
+                return BadRequest();
             }
-            return NotFound("No se encontró el trabajo.");
+
+            Job jobModel = _mapper.Map<Job>(jobDto);
+            await _jobsRepository.Update(jobModel);
+
+            return NoContent();
         }
 
         /// <summary> Elimina un registro de trabajo si es que existe </summary>
         /// <returns> Mensaje de confirmación </returns>
         [HttpDelete("{id}")]
-        public IActionResult DeleteJob(int id)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteJob(int id)
         {
-            var user = _jobsRepository.GetById(id);
-            if (user != null)
+            if (id == 0)
             {
-                _jobsRepository.Delete(id);
-                return Ok("Se eliminó el trabajo correctamente.");
+                return BadRequest();
             }
-            return NotFound("No se encontró el trabajo.");
+
+            var job = await _jobsRepository.GetById(j => j.JobId == id);
+            if (job != null)
+            {
+                await _jobsRepository.Delete(job);
+                return NoContent();
+            }
+
+            return NotFound();
         }
     }
 }

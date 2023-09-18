@@ -11,15 +11,21 @@ namespace Tp.Integrador.Softtek.Entities
         public int ProjectId { get; set; }
 
         [Required]
-        [Column("VARCHAR(100)")]
+        [Column(TypeName = "VARCHAR(100)")]
         public string ProjectName { get; set; }
 
         [Required]
         [Column(TypeName = "VARCHAR(200)")]
         public string Address { get; set; }
 
-        //[ForeignKey("ProjectStatusId")]
-        //[Required]
-        //public ProjectStatus ProjectStatus { get; set; }
+        [Required]
+        [Column(TypeName = "SMALLINT")]
+        public byte Status { get; set; }
+
+        [Required]
+        [Column(TypeName = "BIT")]
+        public bool IsActive { get; set; }
     }
+
+    public enum ProjectStatus { Pendiente = 1, Confirmado = 2, Terminado = 3 }
 }

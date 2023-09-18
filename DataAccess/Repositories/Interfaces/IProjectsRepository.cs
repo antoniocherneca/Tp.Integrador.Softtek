@@ -2,12 +2,8 @@
 
 namespace Tp.Integrador.Softtek.DataAccess.Repositories.Interfaces
 {
-    public interface IProjectsRepository
+    public interface IProjectsRepository : IRepository<Project>
     {
-        public IEnumerable<Project> GetAll();
-        public Project GetById(int id);
-        public void Create(Project project);
-        public void Update(Project project);
-        public void Delete(int id);
+        Task<Project> Update(Project project);
     }
 }

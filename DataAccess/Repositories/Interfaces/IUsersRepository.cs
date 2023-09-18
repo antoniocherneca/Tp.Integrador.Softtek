@@ -2,12 +2,8 @@
 
 namespace Tp.Integrador.Softtek.DataAccess.Repositories.Interfaces
 {
-    public interface IUsersRepository
+    public interface IUsersRepository : IRepository<User>
     {
-        public IEnumerable<User> GetAll();
-        public User GetById(int id);
-        public void Create(User user);
-        public void Update(User user);
-        public void Delete(int id);
+        Task<User> Update(User user);
     }
 }
