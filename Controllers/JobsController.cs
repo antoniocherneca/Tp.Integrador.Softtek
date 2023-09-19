@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Tp.Integrador.Softtek.DataAccess.Repositories;
-using Tp.Integrador.Softtek.DataAccess.Repositories.Interfaces;
 using Tp.Integrador.Softtek.Entities;
+using Tp.Integrador.Softtek.Services;
 
 namespace Tp.Integrador.Softtek.Controllers
 {
@@ -10,14 +9,13 @@ namespace Tp.Integrador.Softtek.Controllers
     [ApiController]
     public class JobsController : ControllerBase
     {
-        private readonly IJobsRepository _jobsRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public JobsController(IJobsRepository jobsRepository, IMapper mapper)
+        public JobsController(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _jobsRepository = jobsRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
-
         }
 
         /// <summary> Obtiene todos los trabajos </summary>
@@ -27,7 +25,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<JobDto>>> GetAllJobs()
         {
-            IEnumerable<Job> jobsList = await _jobsRepository.GetAll();
+            IEnumerable<Job> jobsList = await _unitOfWork.JobsRepository.GetAll();
 
             return Ok(_mapper.Map<IEnumerable<JobDto>>(jobsList));
         }
@@ -45,7 +43,7 @@ namespace Tp.Integrador.Softtek.Controllers
                 return BadRequest();
             }
 
-            var job = await _jobsRepository.GetById(j => j.JobId == id);
+            var job = await _unitOfWork.JobsRepository.GetById(j => j.JobId == id);
             if (job != null)
             {
                 return Ok(_mapper.Map<JobDto>(job));
@@ -74,7 +72,7 @@ namespace Tp.Integrador.Softtek.Controllers
             }
 
             Job jobModel = _mapper.Map<Job>(jobDto);
-            await _jobsRepository.Create(jobModel);
+            await _unitOfWork.JobsRepository.Create(jobModel);
 
             return CreatedAtRoute("GetJobById", new { id = jobDto.JobId }, jobDto);
         }
@@ -92,7 +90,7 @@ namespace Tp.Integrador.Softtek.Controllers
             }
 
             Job jobModel = _mapper.Map<Job>(jobDto);
-            await _jobsRepository.Update(jobModel);
+            await _unitOfWork.JobsRepository.Update(jobModel);
 
             return NoContent();
         }
@@ -110,10 +108,10 @@ namespace Tp.Integrador.Softtek.Controllers
                 return BadRequest();
             }
 
-            var job = await _jobsRepository.GetById(j => j.JobId == id);
+            var job = await _unitOfWork.JobsRepository.GetById(j => j.JobId == id);
             if (job != null)
             {
-                await _jobsRepository.Delete(job);
+                await _unitOfWork.JobsRepository.Delete(job);
                 return NoContent();
             }
 

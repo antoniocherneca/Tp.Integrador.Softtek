@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Tp.Integrador.Softtek.DataAccess.Repositories;
-using Tp.Integrador.Softtek.DataAccess.Repositories.Interfaces;
 using Tp.Integrador.Softtek.Entities;
+using Tp.Integrador.Softtek.Services;
 
 namespace Tp.Integrador.Softtek.Controllers
 {
@@ -10,12 +9,12 @@ namespace Tp.Integrador.Softtek.Controllers
     [ApiController]
     public class ProjectsController : ControllerBase
     {
-        private readonly IProjectsRepository _projectsRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ProjectsController(IProjectsRepository projectsRepository, IMapper mapper)
+        public ProjectsController(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _projectsRepository = projectsRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -26,7 +25,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<ProjectDto>>> GetAllProjects()
         {
-            IEnumerable<Project> projectsList = await _projectsRepository.GetAll();
+            IEnumerable<Project> projectsList = await _unitOfWork.ProjectsRepository.GetAll();
 
             return Ok(_mapper.Map<IEnumerable<ProjectDto>>(projectsList));
         }
@@ -44,7 +43,7 @@ namespace Tp.Integrador.Softtek.Controllers
                 return BadRequest();
             }
 
-            var project = await _projectsRepository.GetById(p => p.ProjectId == id);
+            var project = await _unitOfWork.ProjectsRepository.GetById(p => p.ProjectId == id);
             if (project != null)
             {
                 return Ok(_mapper.Map<ProjectDto>(project));
@@ -72,7 +71,7 @@ namespace Tp.Integrador.Softtek.Controllers
             }
 
             Project projectModel = _mapper.Map<Project>(projectDto);
-            await _projectsRepository.Create(projectModel);
+            await _unitOfWork.ProjectsRepository.Create(projectModel);
 
             return CreatedAtRoute("GetProjectById", new { id = projectDto.ProjectId }, projectDto);
         }
@@ -90,7 +89,7 @@ namespace Tp.Integrador.Softtek.Controllers
             }
 
             Project projectModel = _mapper.Map<Project>(projectDto);
-            await _projectsRepository.Update(projectModel);
+            await _unitOfWork.ProjectsRepository.Update(projectModel);
 
             return NoContent();
         }
@@ -108,10 +107,10 @@ namespace Tp.Integrador.Softtek.Controllers
                 return BadRequest();
             }
 
-            var project = await _projectsRepository.GetById(p => p.ProjectId == id);
+            var project = await _unitOfWork.ProjectsRepository.GetById(p => p.ProjectId == id);
             if (project != null)
             {
-                await _projectsRepository.Delete(project);
+                await _unitOfWork.ProjectsRepository.Delete(project);
                 return NoContent();
             }
 
