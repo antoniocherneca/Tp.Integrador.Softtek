@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Tp.Integrador.Softtek.DataAccess.Repositories.Interfaces;
 using Tp.Integrador.Softtek.Entities;
+using Tp.Integrador.Softtek.Services;
 
 namespace Tp.Integrador.Softtek.Controllers
 {
@@ -9,12 +9,12 @@ namespace Tp.Integrador.Softtek.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUsersRepository _usersRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UsersController(IUsersRepository usersRepository, IMapper mapper)
+        public UsersController(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _usersRepository = usersRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -25,7 +25,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
         {
-            IEnumerable<User> usersList = await _usersRepository.GetAll();
+            IEnumerable<User> usersList = await _unitOfWork.UsersRepository.GetAll();
 
             return Ok(_mapper.Map<IEnumerable<UserDto>>(usersList));
         }
@@ -43,7 +43,7 @@ namespace Tp.Integrador.Softtek.Controllers
                 return BadRequest();
             }
 
-            var user = await _usersRepository.GetById(u => u.UserId == id);
+            var user = await _unitOfWork.UsersRepository.GetById(u => u.UserId == id);
             if (user != null)
             {
                 return Ok(_mapper.Map<UserDto>(user));
@@ -71,7 +71,7 @@ namespace Tp.Integrador.Softtek.Controllers
             }
 
             User userModel = _mapper.Map<User>(userDto);
-            await _usersRepository.Create(userModel);
+            await _unitOfWork.UsersRepository.Create(userModel);
 
             return CreatedAtRoute("GetUserById", new { id = userDto.UserId }, userDto);
         }
@@ -89,7 +89,7 @@ namespace Tp.Integrador.Softtek.Controllers
             }
 
             User userModel = _mapper.Map<User>(userDto);
-            await _usersRepository.Update(userModel);
+            await _unitOfWork.UsersRepository.Update(userModel);
             
             return NoContent();
         }
@@ -107,10 +107,10 @@ namespace Tp.Integrador.Softtek.Controllers
                 return BadRequest();
             }
 
-            var user = await _usersRepository.GetById(u => u.UserId == id);
+            var user = await _unitOfWork.UsersRepository.GetById(u => u.UserId == id);
             if (user != null)
             {
-                await _usersRepository.Delete(user);
+                await _unitOfWork.UsersRepository.Delete(user);
                 return NoContent();
             }
 

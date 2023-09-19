@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Tp.Integrador.Softtek.DataAccess.Repositories;
-using Tp.Integrador.Softtek.DataAccess.Repositories.Interfaces;
 using Tp.Integrador.Softtek.Entities;
+using Tp.Integrador.Softtek.Services;
 
 namespace Tp.Integrador.Softtek.Controllers
 {
@@ -10,12 +9,12 @@ namespace Tp.Integrador.Softtek.Controllers
     [ApiController]
     public class ServicesController : ControllerBase
     {
-        private readonly IServicesRepository _servicesRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ServicesController(IServicesRepository servicesRepository, IMapper mapper)
+        public ServicesController(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _servicesRepository = servicesRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -26,7 +25,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<ServiceDto>>> GetAllServices()
         {
-            IEnumerable<Service> servicesList = await _servicesRepository.GetAll();
+            IEnumerable<Service> servicesList = await _unitOfWork.ServicesRepository.GetAll();
 
             return Ok(_mapper.Map<IEnumerable<ServiceDto>>(servicesList));
         }
@@ -44,7 +43,7 @@ namespace Tp.Integrador.Softtek.Controllers
                 return BadRequest();
             }
 
-            var service = await _servicesRepository.GetById(s => s.SeviceId == id);
+            var service = await _unitOfWork.ServicesRepository.GetById(s => s.SeviceId == id);
             if (service != null)
             {
                 return Ok(_mapper.Map<ServiceDto>(service));
@@ -72,7 +71,7 @@ namespace Tp.Integrador.Softtek.Controllers
             }
 
             Service serviceModel = _mapper.Map<Service>(serviceDto);
-            await _servicesRepository.Create(serviceModel);
+            await _unitOfWork.ServicesRepository.Create(serviceModel);
 
             return CreatedAtRoute("GetServiceById", new { id = serviceDto.SeviceId }, serviceDto);
         }
@@ -90,7 +89,7 @@ namespace Tp.Integrador.Softtek.Controllers
             }
 
             Service serviceModel = _mapper.Map<Service>(serviceDto);
-            await _servicesRepository.Update(serviceModel);
+            await _unitOfWork.ServicesRepository.Update(serviceModel);
 
             return NoContent();
         }
@@ -108,10 +107,10 @@ namespace Tp.Integrador.Softtek.Controllers
                 return BadRequest();
             }
 
-            var service = await _servicesRepository.GetById(s => s.SeviceId == id);
+            var service = await _unitOfWork.ServicesRepository.GetById(s => s.SeviceId == id);
             if (service != null)
             {
-                await _servicesRepository.Delete(service);
+                await _unitOfWork.ServicesRepository.Delete(service);
                 return NoContent();
             }
 

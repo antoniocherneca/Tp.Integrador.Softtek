@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Tp.Integrador.Softtek.DataAccess;
 using Tp.Integrador.Softtek.DataAccess.Repositories;
 using Tp.Integrador.Softtek.DataAccess.Repositories.Interfaces;
+using Tp.Integrador.Softtek.Services;
 
 namespace Tp.Integrador.Softtek
 {
@@ -20,12 +21,13 @@ namespace Tp.Integrador.Softtek
             builder.Services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection")
             );
-            builder.Services.AddScoped<IUsersRepository, UsersRepository>();
-            builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
-            builder.Services.AddScoped<IJobsRepository, JobsRepository>();
-            builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
+            //builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+            //builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
+            //builder.Services.AddScoped<IJobsRepository, JobsRepository>();
+            //builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
 
             builder.Services.AddAutoMapper(typeof(MappingConfig));
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWorkService>();
 
             var app = builder.Build();
 
