@@ -12,7 +12,7 @@ using Tp.Integrador.Softtek.DataAccess;
 namespace Tp.Integrador.Softtek.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230917081414_primer migracion")]
+    [Migration("20230921184954_primer migracion")]
     partial class primermigracion
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -226,10 +226,15 @@ namespace Tp.Integrador.Softtek.Migrations
                         .IsRequired()
                         .HasColumnType("VARCHAR(100)");
 
+                    b.Property<int>("ProjectStatusId")
+                        .HasColumnType("INT");
+
                     b.Property<short>("Status")
                         .HasColumnType("SMALLINT");
 
                     b.HasKey("ProjectId");
+
+                    b.HasIndex("ProjectStatusId");
 
                     b.ToTable("Projects");
 
@@ -240,7 +245,8 @@ namespace Tp.Integrador.Softtek.Migrations
                             Address = "Dirección 1",
                             IsActive = true,
                             ProjectName = "Proyecto 1",
-                            Status = (short)1
+                            ProjectStatusId = 1,
+                            Status = (short)0
                         },
                         new
                         {
@@ -248,7 +254,8 @@ namespace Tp.Integrador.Softtek.Migrations
                             Address = "Dirección 2",
                             IsActive = true,
                             ProjectName = "Proyecto 2",
-                            Status = (short)1
+                            ProjectStatusId = 1,
+                            Status = (short)0
                         },
                         new
                         {
@@ -256,7 +263,8 @@ namespace Tp.Integrador.Softtek.Migrations
                             Address = "Dirección 3",
                             IsActive = true,
                             ProjectName = "Proyecto 3",
-                            Status = (short)2
+                            ProjectStatusId = 2,
+                            Status = (short)0
                         },
                         new
                         {
@@ -264,7 +272,8 @@ namespace Tp.Integrador.Softtek.Migrations
                             Address = "Dirección 4",
                             IsActive = true,
                             ProjectName = "Proyecto 4",
-                            Status = (short)2
+                            ProjectStatusId = 2,
+                            Status = (short)0
                         },
                         new
                         {
@@ -272,7 +281,71 @@ namespace Tp.Integrador.Softtek.Migrations
                             Address = "Dirección 5",
                             IsActive = true,
                             ProjectName = "Proyecto 5",
-                            Status = (short)3
+                            ProjectStatusId = 3,
+                            Status = (short)0
+                        });
+                });
+
+            modelBuilder.Entity("Tp.Integrador.Softtek.Entities.ProjectStatus", b =>
+                {
+                    b.Property<int>("ProjectStatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INT");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectStatusId"), 1L, 1);
+
+                    b.Property<string>("ProjectStatusName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ProjectStatusId");
+
+                    b.ToTable("ProjectStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            ProjectStatusId = 1,
+                            ProjectStatusName = "Pendiente"
+                        },
+                        new
+                        {
+                            ProjectStatusId = 2,
+                            ProjectStatusName = "Confirmado"
+                        },
+                        new
+                        {
+                            ProjectStatusId = 3,
+                            ProjectStatusName = "Terminado"
+                        });
+                });
+
+            modelBuilder.Entity("Tp.Integrador.Softtek.Entities.Role", b =>
+                {
+                    b.Property<int>("RoleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INT");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"), 1L, 1);
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(20)");
+
+                    b.HasKey("RoleId");
+
+                    b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = 1,
+                            RoleName = "Administrador"
+                        },
+                        new
+                        {
+                            RoleId = 2,
+                            RoleName = "Consultor"
                         });
                 });
 
@@ -376,14 +449,16 @@ namespace Tp.Integrador.Softtek.Migrations
                         .IsRequired()
                         .HasColumnType("VARCHAR(100)");
 
-                    b.Property<short>("Type")
-                        .HasColumnType("SMALLINT");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("INT");
 
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("VARCHAR(50)");
 
                     b.HasKey("UserId");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("Users");
 
@@ -394,7 +469,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             Dni = "11111111",
                             IsActive = true,
                             Password = "123456",
-                            Type = (short)1,
+                            RoleId = 1,
                             UserName = "test Admin"
                         },
                         new
@@ -403,7 +478,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             Dni = "22222222",
                             IsActive = true,
                             Password = "123456",
-                            Type = (short)2,
+                            RoleId = 2,
                             UserName = "test User"
                         },
                         new
@@ -412,7 +487,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             Dni = "33333333",
                             IsActive = true,
                             Password = "123456",
-                            Type = (short)2,
+                            RoleId = 2,
                             UserName = "test otro User"
                         });
                 });
@@ -434,6 +509,28 @@ namespace Tp.Integrador.Softtek.Migrations
                     b.Navigation("Project");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("Tp.Integrador.Softtek.Entities.Project", b =>
+                {
+                    b.HasOne("Tp.Integrador.Softtek.Entities.ProjectStatus", "ProjectStatus")
+                        .WithMany()
+                        .HasForeignKey("ProjectStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProjectStatus");
+                });
+
+            modelBuilder.Entity("Tp.Integrador.Softtek.Entities.User", b =>
+                {
+                    b.HasOne("Tp.Integrador.Softtek.Entities.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
                 });
 #pragma warning restore 612, 618
         }

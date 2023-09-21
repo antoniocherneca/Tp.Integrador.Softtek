@@ -15,7 +15,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     UserName = "test Admin",
                     Dni = 11111111,
                     Password = "123456",
-                    Type = (int)UserType.Administrador,
+                    RoleId = 1,
                     IsActive = true
                 },
                 new User
@@ -24,7 +24,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     UserName = "test User",
                     Dni = 22222222,
                     Password = "123456",
-                    Type = (int)UserType.Consultor,
+                    RoleId = 2,
                     IsActive = true
                 },
                 new User
@@ -33,7 +33,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     UserName = "test otro User",
                     Dni = 33333333,
                     Password = "123456",
-                    Type = (int)UserType.Consultor,
+                    RoleId = 2,
                     IsActive = true
                 }
             );

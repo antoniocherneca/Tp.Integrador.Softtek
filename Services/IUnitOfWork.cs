@@ -8,6 +8,9 @@ namespace Tp.Integrador.Softtek.Services
         public ProjectsRepository ProjectsRepository { get; }
         public ServicesRepository ServicesRepository { get; }
         public JobsRepository JobsRepository { get; }
+        public RolesRepository RolesRepository { get; }
+        public ProjectStatusesRepository ProjectStatusesRepository { get; }
+
 
         Task<int> Complete();
     }

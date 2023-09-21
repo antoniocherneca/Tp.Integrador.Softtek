@@ -1,15 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace Tp.Integrador.Softtek.Entities
+namespace Tp.Integrador.Softtek.DTOs
 {
-    public class UserDto
+    public class RegisterRequestDto
     {
-        public int UserId { get; set; }
         public string UserName { get; set; }
+
         public int Dni { get; set; }
-        public byte RoleId { get; set; }
+
+        public int RoleId { get; set; }
+
         public string Password { get; set; }
+
         public bool IsActive { get; set; }
     }
 }
