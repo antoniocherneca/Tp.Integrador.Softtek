@@ -10,6 +10,8 @@ namespace Tp.Integrador.Softtek.Services
         public ProjectsRepository ProjectsRepository { get; private set; }
         public ServicesRepository ServicesRepository { get; private set; }
         public JobsRepository JobsRepository { get; private set; }
+        public RolesRepository RolesRepository { get; private set; }
+        public ProjectStatusesRepository ProjectStatusesRepository { get; private set; }
 
         public UnitOfWorkService(ApplicationDbContext context)
         {
@@ -18,6 +20,8 @@ namespace Tp.Integrador.Softtek.Services
             ProjectsRepository = new ProjectsRepository(_context);
             ServicesRepository = new ServicesRepository(_context);
             JobsRepository = new JobsRepository(_context);
+            RolesRepository = new RolesRepository(_context);
+            ProjectStatusesRepository = new ProjectStatusesRepository(_context);
         }
         public Task<int> Complete()
         {

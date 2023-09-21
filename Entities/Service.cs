@@ -6,20 +6,16 @@ namespace Tp.Integrador.Softtek.Entities
     [Table("Services")]
     public class Service
     {
-        [Key]
-        [Column(TypeName = "INT")]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Column(TypeName = "INT")]
         public int SeviceId { get; set; }
 
-        [Required]
-        [Column(TypeName = "VARCHAR(500)")]
+        [Required, Column(TypeName = "VARCHAR(500)")]
         public string Description { get; set; }
 
-        [Required]
-        [Column(TypeName = "MONEY")]
+        [Required, Column(TypeName = "MONEY")]
         public double HourValue { get; set; }
 
-        [Required]
-        [Column(TypeName = "BIT")]
+        [Required, Column(TypeName = "BIT")]
         public bool IsActive { get; set; }
     }
 }

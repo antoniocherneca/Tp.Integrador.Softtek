@@ -11,6 +11,8 @@ namespace Tp.Integrador.Softtek
             CreateMap<Service, ServiceDto>().ReverseMap();
             CreateMap<Project, ProjectDto>().ReverseMap();
             CreateMap<Job, JobDto>().ReverseMap();
+            CreateMap<Role, RoleDto>().ReverseMap();
+            CreateMap<ProjectStatus, ProjectStatusDto>().ReverseMap();
         }
     }
 }

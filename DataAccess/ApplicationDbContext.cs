@@ -12,6 +12,8 @@ namespace Tp.Integrador.Softtek.DataAccess
         public DbSet<Job> Jobs { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Project> Projects { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<ProjectStatus> ProjectStatuses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,7 +22,9 @@ namespace Tp.Integrador.Softtek.DataAccess
                 new UserSeeder(),
                 new ProjectSeeder(),
                 new ServiceSeeder(),
-                new JobSeeder()
+                new JobSeeder(),
+                new RoleSeeder(),
+                new ProjectStatusSeeder(),
             };
 
             foreach (var seeder in seeders)
