@@ -6,26 +6,24 @@ namespace Tp.Integrador.Softtek.Entities
     [Table("Projects")]
     public class Project
     {
-        [Key]
-        [Column(TypeName = "INT")]
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Column(TypeName = "INT")]
         public int ProjectId { get; set; }
 
-        [Required]
-        [Column(TypeName = "VARCHAR(100)")]
+        [Required, Column(TypeName = "VARCHAR(100)")]
         public string ProjectName { get; set; }
 
-        [Required]
-        [Column(TypeName = "VARCHAR(200)")]
+        [Required, Column(TypeName = "VARCHAR(200)")]
         public string Address { get; set; }
 
-        [Required]
-        [Column(TypeName = "SMALLINT")]
+        [Required, Column(TypeName = "SMALLINT")]
         public byte Status { get; set; }
 
-        [Required]
-        [Column(TypeName = "BIT")]
+        [Required, Column(TypeName = "BIT")]
         public bool IsActive { get; set; }
-    }
 
-    public enum ProjectStatus { Pendiente = 1, Confirmado = 2, Terminado = 3 }
+        [ForeignKey("ProjectStatus"), Required, Column(TypeName = "INT")]
+        public int ProjectStatusId { get; set; }
+
+        public virtual ProjectStatus ProjectStatus { get; set; }
+    }
 }

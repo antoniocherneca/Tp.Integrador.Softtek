@@ -10,19 +10,29 @@ namespace Tp.Integrador.Softtek.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Projects",
+                name: "ProjectStatuses",
                 columns: table => new
                 {
-                    ProjectId = table.Column<int>(type: "INT", nullable: false)
+                    ProjectStatusId = table.Column<int>(type: "INT", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ProjectName = table.Column<string>(type: "VARCHAR(100)", nullable: false),
-                    Address = table.Column<string>(type: "VARCHAR(200)", nullable: false),
-                    Status = table.Column<short>(type: "SMALLINT", nullable: false),
-                    IsActive = table.Column<bool>(type: "BIT", nullable: false)
+                    ProjectStatusName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Projects", x => x.ProjectId);
+                    table.PrimaryKey("PK_ProjectStatuses", x => x.ProjectStatusId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    RoleId = table.Column<int>(type: "INT", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleName = table.Column<string>(type: "VARCHAR(20)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.RoleId);
                 });
 
             migrationBuilder.CreateTable(
@@ -41,6 +51,29 @@ namespace Tp.Integrador.Softtek.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Projects",
+                columns: table => new
+                {
+                    ProjectId = table.Column<int>(type: "INT", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProjectName = table.Column<string>(type: "VARCHAR(100)", nullable: false),
+                    Address = table.Column<string>(type: "VARCHAR(200)", nullable: false),
+                    Status = table.Column<short>(type: "SMALLINT", nullable: false),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false),
+                    ProjectStatusId = table.Column<int>(type: "INT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Projects", x => x.ProjectId);
+                    table.ForeignKey(
+                        name: "FK_Projects_ProjectStatuses_ProjectStatusId",
+                        column: x => x.ProjectStatusId,
+                        principalTable: "ProjectStatuses",
+                        principalColumn: "ProjectStatusId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -48,13 +81,19 @@ namespace Tp.Integrador.Softtek.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserName = table.Column<string>(type: "VARCHAR(50)", nullable: false),
                     Dni = table.Column<string>(type: "VARCHAR(9)", nullable: false),
-                    Type = table.Column<short>(type: "SMALLINT", nullable: false),
                     Password = table.Column<string>(type: "VARCHAR(100)", nullable: false),
-                    IsActive = table.Column<bool>(type: "BIT", nullable: false)
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false),
+                    RoleId = table.Column<int>(type: "INT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UserId);
+                    table.ForeignKey(
+                        name: "FK_Users_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "RoleId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,9 +106,9 @@ namespace Tp.Integrador.Softtek.Migrations
                     NumberOfHours = table.Column<int>(type: "INT", nullable: false),
                     HourValue = table.Column<decimal>(type: "MONEY", nullable: false),
                     Cost = table.Column<decimal>(type: "MONEY", nullable: false),
+                    IsActive = table.Column<bool>(type: "BIT", nullable: false),
                     ProjectId = table.Column<int>(type: "INT", nullable: false),
-                    ServiceId = table.Column<int>(type: "INT", nullable: false),
-                    IsActive = table.Column<bool>(type: "BIT", nullable: false)
+                    ServiceId = table.Column<int>(type: "INT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -89,15 +128,22 @@ namespace Tp.Integrador.Softtek.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Projects",
-                columns: new[] { "ProjectId", "Address", "IsActive", "ProjectName", "Status" },
+                table: "ProjectStatuses",
+                columns: new[] { "ProjectStatusId", "ProjectStatusName" },
                 values: new object[,]
                 {
-                    { 1, "Dirección 1", true, "Proyecto 1", (short)1 },
-                    { 2, "Dirección 2", true, "Proyecto 2", (short)1 },
-                    { 3, "Dirección 3", true, "Proyecto 3", (short)2 },
-                    { 4, "Dirección 4", true, "Proyecto 4", (short)2 },
-                    { 5, "Dirección 5", true, "Proyecto 5", (short)3 }
+                    { 1, "Pendiente" },
+                    { 2, "Confirmado" },
+                    { 3, "Terminado" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "RoleId", "RoleName" },
+                values: new object[,]
+                {
+                    { 1, "Administrador" },
+                    { 2, "Consultor" }
                 });
 
             migrationBuilder.InsertData(
@@ -116,13 +162,25 @@ namespace Tp.Integrador.Softtek.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "UserId", "Dni", "IsActive", "Password", "Type", "UserName" },
+                table: "Projects",
+                columns: new[] { "ProjectId", "Address", "IsActive", "ProjectName", "ProjectStatusId", "Status" },
                 values: new object[,]
                 {
-                    { 1, "11111111", true, "123456", (short)1, "test Admin" },
-                    { 2, "22222222", true, "123456", (short)2, "test User" },
-                    { 3, "33333333", true, "123456", (short)2, "test otro User" }
+                    { 1, "Dirección 1", true, "Proyecto 1", 1, (short)0 },
+                    { 2, "Dirección 2", true, "Proyecto 2", 1, (short)0 },
+                    { 3, "Dirección 3", true, "Proyecto 3", 2, (short)0 },
+                    { 4, "Dirección 4", true, "Proyecto 4", 2, (short)0 },
+                    { 5, "Dirección 5", true, "Proyecto 5", 3, (short)0 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "UserId", "Dni", "IsActive", "Password", "RoleId", "UserName" },
+                values: new object[,]
+                {
+                    { 1, "11111111", true, "123456", 1, "test Admin" },
+                    { 2, "22222222", true, "123456", 2, "test User" },
+                    { 3, "33333333", true, "123456", 2, "test otro User" }
                 });
 
             migrationBuilder.InsertData(
@@ -154,6 +212,16 @@ namespace Tp.Integrador.Softtek.Migrations
                 name: "IX_Jobs_ServiceId",
                 table: "Jobs",
                 column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Projects_ProjectStatusId",
+                table: "Projects",
+                column: "ProjectStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_RoleId",
+                table: "Users",
+                column: "RoleId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -169,6 +237,12 @@ namespace Tp.Integrador.Softtek.Migrations
 
             migrationBuilder.DropTable(
                 name: "Services");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "ProjectStatuses");
         }
     }
 }
