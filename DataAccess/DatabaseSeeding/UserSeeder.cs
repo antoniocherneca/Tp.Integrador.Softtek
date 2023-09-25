@@ -12,8 +12,9 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                 new User
                 {
                     UserId = 1,
-                    UserName = "test Admin",
-                    Dni = 11111111,
+                    UserName = "Juan Perez",
+                    Dni = "11111111",
+                    Email = "jperez@gmail.com",
                     Password = "123456",
                     RoleId = 1,
                     IsActive = true
@@ -21,8 +22,9 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                 new User
                 {
                     UserId = 2,
-                    UserName = "test User",
-                    Dni = 22222222,
+                    UserName = "Maria Lopez",
+                    Dni = "22222222",
+                    Email = "mlopez@gmail.com",
                     Password = "123456",
                     RoleId = 2,
                     IsActive = true
@@ -30,8 +32,9 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                 new User
                 {
                     UserId = 3,
-                    UserName = "test otro User",
-                    Dni = 33333333,
+                    UserName = "Pedro Ramirez",
+                    Dni = "33333333",
+                    Email = "pramirez@gmail.com",
                     Password = "123456",
                     RoleId = 2,
                     IsActive = true

@@ -9,6 +9,9 @@ namespace Tp.Integrador.Softtek.Entities
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Column(TypeName = "INT")]
         public int ProjectStatusId { get; set; }
 
+        [Required(ErrorMessage = "El nombre del estado del proyecto es obligatorio")]
+        [Column(TypeName = "VARCHAR(20)")]
+        [MaxLength(20, ErrorMessage = "El nombre del estado del proyecto es muy largo")]
         public string ProjectStatusName { get; set; }
     }
 }

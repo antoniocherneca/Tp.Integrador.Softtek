@@ -9,16 +9,20 @@ namespace Tp.Integrador.Softtek.Entities
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Column(TypeName = "INT")]
         public int JobId { get; set; }
 
-        [Required, Column(TypeName = "DATE")]
+        [Required(ErrorMessage = "La fecha de inicio del trabajo es obligatoria")]
+        [Column(TypeName = "DATE")]
         public DateTime JobDate { get; set; }
 
-        [Required, Column(TypeName = "INT")]
+        [Required(ErrorMessage = "El número de horas del trabajo es obligatorio")]
+        [Column(TypeName = "INT")]
         public int NumberOfHours { get; set; }
 
-        [Required, Column(TypeName = "MONEY")]
+        [Required(ErrorMessage = "El valor de la hora del trabajo es obligatorio")]
+        [Column(TypeName = "MONEY")]
         public double HourValue { get; set; }
 
-        [Required, Column(TypeName = "MONEY")]
+        [Required(ErrorMessage = "El costo del trabajo es obligatorio")]
+        [Column(TypeName = "MONEY")]
         public double Cost { get; set; }
 
         [Required, Column(TypeName = "BIT")]

@@ -9,13 +9,24 @@ namespace Tp.Integrador.Softtek.Entities
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Column(TypeName = "INT")]
         public int UserId { get; set; }
 
-        [Required, Column(TypeName = "VARCHAR(50)")]
+        [Required(ErrorMessage = "El nombre de usuario es obligatorio")]
+        [Column(TypeName = "VARCHAR(50)")]
+        [MaxLength(50, ErrorMessage = "El nombre de usuario es muy largo")]
         public string UserName { get; set; }
 
-        [Required, Column(TypeName = "VARCHAR(9)")]
-        public int Dni { get; set; }
+        [Required(ErrorMessage = "El DNI es obligatorio")]
+        [Column(TypeName = "VARCHAR(9)")]
+        [MaxLength(9, ErrorMessage = "El DNI es muy largo")]
+        public string Dni { get; set; }
 
-        [Required, Column(TypeName = "VARCHAR(100)")]
+        [Required(ErrorMessage = "El E-mail es obligatorio")]
+        [Column(TypeName = "VARCHAR(50)")]
+        [MaxLength(50, ErrorMessage = "El E-mail es muy largo")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "La contraseña es obligatoria")]
+        [Column(TypeName = "VARCHAR(100)")]
+        [MaxLength(100, ErrorMessage = "La contraseña es muy larga")]
         public string Password { get; set; }
 
         [Required, Column(TypeName = "BIT")]
