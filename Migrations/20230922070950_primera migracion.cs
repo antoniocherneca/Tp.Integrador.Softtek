@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Tp.Integrador.Softtek.Migrations
 {
-    public partial class primermigracion : Migration
+    public partial class primeramigracion : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -81,6 +81,7 @@ namespace Tp.Integrador.Softtek.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserName = table.Column<string>(type: "VARCHAR(50)", nullable: false),
                     Dni = table.Column<string>(type: "VARCHAR(9)", nullable: false),
+                    Email = table.Column<string>(type: "VARCHAR(50)", nullable: false),
                     Password = table.Column<string>(type: "VARCHAR(100)", nullable: false),
                     IsActive = table.Column<bool>(type: "BIT", nullable: false),
                     RoleId = table.Column<int>(type: "INT", nullable: false)
@@ -175,12 +176,12 @@ namespace Tp.Integrador.Softtek.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "UserId", "Dni", "IsActive", "Password", "RoleId", "UserName" },
+                columns: new[] { "UserId", "Dni", "Email", "IsActive", "Password", "RoleId", "UserName" },
                 values: new object[,]
                 {
-                    { 1, "11111111", true, "123456", 1, "test Admin" },
-                    { 2, "22222222", true, "123456", 2, "test User" },
-                    { 3, "33333333", true, "123456", 2, "test otro User" }
+                    { 1, "11111111", "jperez@gmail.com", true, "123456", 1, "Juan Perez" },
+                    { 2, "22222222", "mlopez@gmail.com", true, "123456", 2, "Maria Lopez" },
+                    { 3, "33333333", "pramirez@gmail.com", true, "123456", 2, "Pedro Ramirez" }
                 });
 
             migrationBuilder.InsertData(

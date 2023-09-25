@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tp.Integrador.Softtek.DataAccess;
 
@@ -11,9 +12,10 @@ using Tp.Integrador.Softtek.DataAccess;
 namespace Tp.Integrador.Softtek.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230922070950_primera migracion")]
+    partial class primeramigracion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -215,7 +217,6 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasMaxLength(200)
                         .HasColumnType("VARCHAR(200)");
 
                     b.Property<bool>("IsActive")
@@ -223,11 +224,13 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     b.Property<string>("ProjectName")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("VARCHAR(100)");
 
                     b.Property<int>("ProjectStatusId")
                         .HasColumnType("INT");
+
+                    b.Property<short>("Status")
+                        .HasColumnType("SMALLINT");
 
                     b.HasKey("ProjectId");
 
@@ -242,7 +245,8 @@ namespace Tp.Integrador.Softtek.Migrations
                             Address = "Dirección 1",
                             IsActive = true,
                             ProjectName = "Proyecto 1",
-                            ProjectStatusId = 1
+                            ProjectStatusId = 1,
+                            Status = (short)0
                         },
                         new
                         {
@@ -250,7 +254,8 @@ namespace Tp.Integrador.Softtek.Migrations
                             Address = "Dirección 2",
                             IsActive = true,
                             ProjectName = "Proyecto 2",
-                            ProjectStatusId = 1
+                            ProjectStatusId = 1,
+                            Status = (short)0
                         },
                         new
                         {
@@ -258,7 +263,8 @@ namespace Tp.Integrador.Softtek.Migrations
                             Address = "Dirección 3",
                             IsActive = true,
                             ProjectName = "Proyecto 3",
-                            ProjectStatusId = 2
+                            ProjectStatusId = 2,
+                            Status = (short)0
                         },
                         new
                         {
@@ -266,7 +272,8 @@ namespace Tp.Integrador.Softtek.Migrations
                             Address = "Dirección 4",
                             IsActive = true,
                             ProjectName = "Proyecto 4",
-                            ProjectStatusId = 2
+                            ProjectStatusId = 2,
+                            Status = (short)0
                         },
                         new
                         {
@@ -274,7 +281,8 @@ namespace Tp.Integrador.Softtek.Migrations
                             Address = "Dirección 5",
                             IsActive = true,
                             ProjectName = "Proyecto 5",
-                            ProjectStatusId = 3
+                            ProjectStatusId = 3,
+                            Status = (short)0
                         });
                 });
 
@@ -288,8 +296,7 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     b.Property<string>("ProjectStatusName")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("VARCHAR(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ProjectStatusId");
 
@@ -323,7 +330,6 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     b.Property<string>("RoleName")
                         .IsRequired()
-                        .HasMaxLength(20)
                         .HasColumnType("VARCHAR(20)");
 
                     b.HasKey("RoleId");
@@ -353,7 +359,6 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(500)
                         .HasColumnType("VARCHAR(500)");
 
                     b.Property<decimal>("HourValue")
@@ -435,12 +440,10 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     b.Property<string>("Dni")
                         .IsRequired()
-                        .HasMaxLength(9)
                         .HasColumnType("VARCHAR(9)");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(50)
                         .HasColumnType("VARCHAR(50)");
 
                     b.Property<bool>("IsActive")
@@ -448,7 +451,6 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(100)
                         .HasColumnType("VARCHAR(100)");
 
                     b.Property<int>("RoleId")
@@ -456,7 +458,6 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasMaxLength(50)
                         .HasColumnType("VARCHAR(50)");
 
                     b.HasKey("UserId");
