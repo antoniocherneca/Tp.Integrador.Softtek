@@ -9,7 +9,9 @@ namespace Tp.Integrador.Softtek.Entities
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Column(TypeName = "INT")]
         public int RoleId { get; set; }
 
-        [Required, Column(TypeName = "VARCHAR(20)")]
+        [Required(ErrorMessage = "El nombre del rol es obligatorio")]
+        [Column(TypeName = "VARCHAR(20)")]
+        [MaxLength(20, ErrorMessage = "El nombre del rol es muy largo")]
         public string RoleName { get; set; }
     }
 }

@@ -9,14 +9,15 @@ namespace Tp.Integrador.Softtek.Entities
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Column(TypeName = "INT")]
         public int ProjectId { get; set; }
 
-        [Required, Column(TypeName = "VARCHAR(100)")]
+        [Required(ErrorMessage = "El nombre del proyecto es obligatorio")]
+        [Column(TypeName = "VARCHAR(100)")]
+        [MaxLength(100, ErrorMessage = "El nombre del proyecto es muy largo")]
         public string ProjectName { get; set; }
 
-        [Required, Column(TypeName = "VARCHAR(200)")]
+        [Required(ErrorMessage = "La dirección del proyecto es obligatoria")]
+        [Column(TypeName = "VARCHAR(200)")]
+        [MaxLength(200, ErrorMessage = "El nombre del proyecto es muy largo")]
         public string Address { get; set; }
-
-        [Required, Column(TypeName = "SMALLINT")]
-        public byte Status { get; set; }
 
         [Required, Column(TypeName = "BIT")]
         public bool IsActive { get; set; }

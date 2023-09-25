@@ -12,8 +12,8 @@ using Tp.Integrador.Softtek.DataAccess;
 namespace Tp.Integrador.Softtek.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230921184954_primer migracion")]
-    partial class primermigracion
+    [Migration("20230923063004_change_entities")]
+    partial class change_entities
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -217,6 +217,7 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
+                        .HasMaxLength(200)
                         .HasColumnType("VARCHAR(200)");
 
                     b.Property<bool>("IsActive")
@@ -224,13 +225,11 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     b.Property<string>("ProjectName")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("VARCHAR(100)");
 
                     b.Property<int>("ProjectStatusId")
                         .HasColumnType("INT");
-
-                    b.Property<short>("Status")
-                        .HasColumnType("SMALLINT");
 
                     b.HasKey("ProjectId");
 
@@ -245,8 +244,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             Address = "Dirección 1",
                             IsActive = true,
                             ProjectName = "Proyecto 1",
-                            ProjectStatusId = 1,
-                            Status = (short)0
+                            ProjectStatusId = 1
                         },
                         new
                         {
@@ -254,8 +252,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             Address = "Dirección 2",
                             IsActive = true,
                             ProjectName = "Proyecto 2",
-                            ProjectStatusId = 1,
-                            Status = (short)0
+                            ProjectStatusId = 1
                         },
                         new
                         {
@@ -263,8 +260,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             Address = "Dirección 3",
                             IsActive = true,
                             ProjectName = "Proyecto 3",
-                            ProjectStatusId = 2,
-                            Status = (short)0
+                            ProjectStatusId = 2
                         },
                         new
                         {
@@ -272,8 +268,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             Address = "Dirección 4",
                             IsActive = true,
                             ProjectName = "Proyecto 4",
-                            ProjectStatusId = 2,
-                            Status = (short)0
+                            ProjectStatusId = 2
                         },
                         new
                         {
@@ -281,8 +276,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             Address = "Dirección 5",
                             IsActive = true,
                             ProjectName = "Proyecto 5",
-                            ProjectStatusId = 3,
-                            Status = (short)0
+                            ProjectStatusId = 3
                         });
                 });
 
@@ -296,7 +290,8 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     b.Property<string>("ProjectStatusName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("VARCHAR(20)");
 
                     b.HasKey("ProjectStatusId");
 
@@ -330,6 +325,7 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     b.Property<string>("RoleName")
                         .IsRequired()
+                        .HasMaxLength(20)
                         .HasColumnType("VARCHAR(20)");
 
                     b.HasKey("RoleId");
@@ -359,6 +355,7 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
+                        .HasMaxLength(500)
                         .HasColumnType("VARCHAR(500)");
 
                     b.Property<decimal>("HourValue")
@@ -440,13 +437,20 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     b.Property<string>("Dni")
                         .IsRequired()
+                        .HasMaxLength(9)
                         .HasColumnType("VARCHAR(9)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("VARCHAR(50)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("BIT");
 
                     b.Property<string>("Password")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("VARCHAR(100)");
 
                     b.Property<int>("RoleId")
@@ -454,6 +458,7 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     b.Property<string>("UserName")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("VARCHAR(50)");
 
                     b.HasKey("UserId");
@@ -467,28 +472,31 @@ namespace Tp.Integrador.Softtek.Migrations
                         {
                             UserId = 1,
                             Dni = "11111111",
+                            Email = "jperez@gmail.com",
                             IsActive = true,
                             Password = "123456",
                             RoleId = 1,
-                            UserName = "test Admin"
+                            UserName = "Juan Perez"
                         },
                         new
                         {
                             UserId = 2,
                             Dni = "22222222",
+                            Email = "mlopez@gmail.com",
                             IsActive = true,
                             Password = "123456",
                             RoleId = 2,
-                            UserName = "test User"
+                            UserName = "Maria Lopez"
                         },
                         new
                         {
                             UserId = 3,
                             Dni = "33333333",
+                            Email = "pramirez@gmail.com",
                             IsActive = true,
                             Password = "123456",
                             RoleId = 2,
-                            UserName = "test otro User"
+                            UserName = "Pedro Ramirez"
                         });
                 });
 
