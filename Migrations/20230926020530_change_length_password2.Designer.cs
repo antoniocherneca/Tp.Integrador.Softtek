@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tp.Integrador.Softtek.DataAccess;
 
@@ -11,9 +12,10 @@ using Tp.Integrador.Softtek.DataAccess;
 namespace Tp.Integrador.Softtek.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230926020530_change_length_password2")]
+    partial class change_length_password2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -503,7 +505,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             Dni = "33333333",
                             Email = "pramirez@gmail.com",
                             IsActive = true,
-                            Password = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+                            Password = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c926",
                             RoleId = 2,
                             UserName = "Pedro Ramirez"
                         });

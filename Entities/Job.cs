@@ -31,11 +31,11 @@ namespace Tp.Integrador.Softtek.Entities
         [ForeignKey("Project"), Required, Column(TypeName = "INT")]
         public int ProjectId { get; set; }
 
-        public virtual Project Project { get; set; }
+        public virtual Project? Project { get; set; }
 
         [ForeignKey("Service"), Required, Column(TypeName = "INT")]
         public int ServiceId { get; set; }
 
-        public virtual Service Service { get; set; }
+        public virtual Service? Service { get; set; }
     }
 }

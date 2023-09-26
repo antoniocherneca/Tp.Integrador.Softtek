@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Security.Claims;
 using System.Text;
 using Tp.Integrador.Softtek.DataAccess;
 using Tp.Integrador.Softtek.Services;
@@ -55,6 +56,11 @@ namespace Tp.Integrador.Softtek
 
             builder.Services.AddAutoMapper(typeof(MappingConfig));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWorkService>();
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, "1"));
+            });
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
             {
