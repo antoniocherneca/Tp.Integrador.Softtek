@@ -10,7 +10,6 @@ namespace Tp.Integrador.Softtek.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class LoginController : ControllerBase
     {
         private TokenJwtHelper _tokenJwtHelper;
@@ -23,7 +22,6 @@ namespace Tp.Integrador.Softtek.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<IActionResult> Login(AuthenticateDto authDto)
         {
             var userCredentials = await _unitOfWork.UsersRepository.AuthenticateCredentials(authDto);

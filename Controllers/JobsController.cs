@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tp.Integrador.Softtek.Entities;
 using Tp.Integrador.Softtek.Services;
@@ -23,6 +24,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<JobDto>>> GetAllJobs()
         {
             IEnumerable<Job> jobsList = await _unitOfWork.JobsRepository.GetAll();
@@ -36,6 +38,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize]
         public async Task<ActionResult<JobDto>> GetJob(int id)
         {
             if (id == 0)
@@ -58,7 +61,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult<JobDto>> PostJob([FromBody] JobDto jobDto)
         {
             if (!ModelState.IsValid)
@@ -82,6 +85,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> PutJob(int id, [FromBody] JobDto jobDto)
         {
             if (jobDto == null || id != jobDto.JobId)
@@ -101,6 +105,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteJob(int id)
         {
             if (id == 0)
@@ -111,6 +116,7 @@ namespace Tp.Integrador.Softtek.Controllers
             var job = await _unitOfWork.JobsRepository.GetById(j => j.JobId == id);
             if (job != null)
             {
+                job.IsActive = false;
                 await _unitOfWork.JobsRepository.Delete(job);
                 return NoContent();
             }

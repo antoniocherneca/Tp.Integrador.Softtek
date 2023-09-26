@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tp.Integrador.Softtek.Entities;
 using Tp.Integrador.Softtek.Services;
@@ -23,6 +24,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<ProjectStatusDto>>> GetAllProjectStatuses()
         {
             IEnumerable<ProjectStatus> projectStatusesList = await _unitOfWork.ProjectStatusesRepository.GetAll();
@@ -36,6 +38,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize]
         public async Task<ActionResult<ProjectStatusDto>> GetProjectStatus(int id)
         {
             if (id == 0)
@@ -58,6 +61,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult<ProjectStatusDto>> PostProjectStatus([FromBody] ProjectStatusDto projectStatusDto)
         {
             if (!ModelState.IsValid)
@@ -81,6 +85,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> PutProjectStatus(int id, [FromBody] ProjectStatusDto projectStatusDto)
         {
             if (projectStatusDto == null || id != projectStatusDto.ProjectStatusId)
@@ -100,6 +105,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteProjectStatus(int id)
         {
             if (id == 0)
@@ -110,6 +116,7 @@ namespace Tp.Integrador.Softtek.Controllers
             var projectStatus = await _unitOfWork.ProjectStatusesRepository.GetById(ps => ps.ProjectStatusId == id);
             if (projectStatus != null)
             {
+                projectStatus.IsActive = false;
                 await _unitOfWork.ProjectStatusesRepository.Delete(projectStatus);
                 return NoContent();
             }

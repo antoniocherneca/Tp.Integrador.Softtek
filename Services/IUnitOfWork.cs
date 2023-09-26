@@ -11,7 +11,6 @@ namespace Tp.Integrador.Softtek.Services
         public RolesRepository RolesRepository { get; }
         public ProjectStatusesRepository ProjectStatusesRepository { get; }
 
-
         Task<int> Complete();
     }
 }
