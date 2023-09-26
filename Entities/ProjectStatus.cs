@@ -13,5 +13,8 @@ namespace Tp.Integrador.Softtek.Entities
         [Column(TypeName = "VARCHAR(20)")]
         [MaxLength(20, ErrorMessage = "El nombre del estado del proyecto es muy largo")]
         public string ProjectStatusName { get; set; }
+
+        [Required, Column(TypeName = "BIT")]
+        public bool IsActive { get; set; }
     }
 }

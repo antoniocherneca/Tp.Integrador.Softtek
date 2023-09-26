@@ -25,6 +25,6 @@ namespace Tp.Integrador.Softtek.Entities
         [ForeignKey("ProjectStatus"), Required, Column(TypeName = "INT")]
         public int ProjectStatusId { get; set; }
 
-        public virtual ProjectStatus ProjectStatus { get; set; }
+        public virtual ProjectStatus? ProjectStatus { get; set; }
     }
 }

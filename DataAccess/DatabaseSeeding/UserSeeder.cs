@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Tp.Integrador.Softtek.DTOs;
 using Tp.Integrador.Softtek.Entities;
+using Tp.Integrador.Softtek.Helpers;
 
 namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
 {
@@ -15,7 +17,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     UserName = "Juan Perez",
                     Dni = "11111111",
                     Email = "jperez@gmail.com",
-                    Password = "123456",
+                    Password = PasswordEncryptHelper.EncryptPassword("123456"),
                     RoleId = 1,
                     IsActive = true
                 },
@@ -25,7 +27,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     UserName = "Maria Lopez",
                     Dni = "22222222",
                     Email = "mlopez@gmail.com",
-                    Password = "123456",
+                    Password = PasswordEncryptHelper.EncryptPassword("123456"),
                     RoleId = 2,
                     IsActive = true
                 },
@@ -35,7 +37,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     UserName = "Pedro Ramirez",
                     Dni = "33333333",
                     Email = "pramirez@gmail.com",
-                    Password = "123456",
+                    Password = PasswordEncryptHelper.EncryptPassword("123456"),
                     RoleId = 2,
                     IsActive = true
                 }

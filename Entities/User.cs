@@ -1,11 +1,39 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Tp.Integrador.Softtek.DTOs;
+using Tp.Integrador.Softtek.Helpers;
 
 namespace Tp.Integrador.Softtek.Entities
 {
     [Table("Users")]
     public class User
     {
+        public User()
+        {
+            
+        }
+
+        public User(RegisterDto registerDto)
+        {
+            this.UserName = registerDto.UserName;
+            this.Dni = registerDto.Dni;
+            this.Email = registerDto.Email;
+            this.Password = PasswordEncryptHelper.EncryptPassword(registerDto.Password);
+            this.IsActive = registerDto.IsActive;
+            this.RoleId = registerDto.RoleId;
+        }
+
+        public User(RegisterDto registerDto, int id)
+        {
+            this.UserId = id;
+            this.UserName = registerDto.UserName;
+            this.Dni = registerDto.Dni;
+            this.Email = registerDto.Email;
+            this.Password = PasswordEncryptHelper.EncryptPassword(registerDto.Password);
+            this.IsActive = registerDto.IsActive;
+            this.RoleId = registerDto.RoleId;
+        }
+
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Column(TypeName = "INT")]
         public int UserId { get; set; }
 
@@ -25,8 +53,8 @@ namespace Tp.Integrador.Softtek.Entities
         public string Email { get; set; }
 
         [Required(ErrorMessage = "La contraseña es obligatoria")]
-        [Column(TypeName = "VARCHAR(100)")]
-        [MaxLength(100, ErrorMessage = "La contraseña es muy larga")]
+        [Column(TypeName = "VARCHAR(250)")]
+        [MaxLength(250, ErrorMessage = "La contraseña es muy larga")]
         public string Password { get; set; }
 
         [Required, Column(TypeName = "BIT")]
@@ -35,6 +63,6 @@ namespace Tp.Integrador.Softtek.Entities
         [ForeignKey("Role"), Required, Column(TypeName = "INT")]
         public int RoleId { get; set; }
 
-        public virtual Role Role { get; set; }
+        public virtual Role? Role { get; set; }
     }
 }

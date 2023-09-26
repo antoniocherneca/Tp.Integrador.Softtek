@@ -1,14 +1,15 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Tp.Integrador.Softtek.DTOs;
 using Tp.Integrador.Softtek.Entities;
+using Tp.Integrador.Softtek.Helpers;
 using Tp.Integrador.Softtek.Services;
 
 namespace Tp.Integrador.Softtek.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -25,6 +26,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
         {
             IEnumerable<User> usersList = await _unitOfWork.UsersRepository.GetAll();
@@ -38,6 +40,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize]
         public async Task<ActionResult<UserDto>> GetUser(int id)
         {
             if (id == 0)
@@ -60,6 +63,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [Authorize(Policy = "Admin")]
         public async Task<ActionResult<UserDto>> PostUser([FromBody] UserDto userDto)
         {
             if (!ModelState.IsValid)
@@ -73,6 +77,7 @@ namespace Tp.Integrador.Softtek.Controllers
             }
 
             User userModel = _mapper.Map<User>(userDto);
+            userModel.Password = PasswordEncryptHelper.EncryptPassword(userModel.Password);
             await _unitOfWork.UsersRepository.Create(userModel);
 
             return CreatedAtRoute("GetUserById", new { id = userDto.UserId }, userDto);
@@ -83,6 +88,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> PutUser(int id, [FromBody] UserDto userDto)
         {
             if (userDto == null || id != userDto.UserId)
@@ -102,6 +108,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             if (id == 0)
@@ -112,11 +119,24 @@ namespace Tp.Integrador.Softtek.Controllers
             var user = await _unitOfWork.UsersRepository.GetById(u => u.UserId == id);
             if (user != null)
             {
+                user.IsActive = false;
                 await _unitOfWork.UsersRepository.Delete(user);
                 return NoContent();
             }
 
             return NotFound();
+        }
+
+        [HttpPost]
+        [Route("Register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register(RegisterDto registerDto)
+        {
+            User user = new User(registerDto);
+            await _unitOfWork.UsersRepository.Insert(user);
+            await _unitOfWork.Complete();
+
+            return Ok("Se ha registrado correctamente");
         }
     }
 }

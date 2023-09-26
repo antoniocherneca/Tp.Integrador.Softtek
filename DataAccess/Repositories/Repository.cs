@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Tp.Integrador.Softtek.DataAccess.Repositories.Interfaces;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Tp.Integrador.Softtek.DataAccess.Repositories
 {
@@ -50,8 +51,14 @@ namespace Tp.Integrador.Softtek.DataAccess.Repositories
 
         public async Task Delete(T entity)
         {
-            dbSet.Remove(entity);
+            dbSet.Update(entity);   //borrado lógico
             await Save();
+        }
+
+        public async Task<bool> Insert(T entity)
+        {
+            await _context.Set<T>().AddAsync(entity);
+            return true;
         }
 
         public async Task Save()
