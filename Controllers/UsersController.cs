@@ -4,10 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 using Tp.Integrador.Softtek.DTOs;
 using Tp.Integrador.Softtek.Entities;
 using Tp.Integrador.Softtek.Helpers;
+using Tp.Integrador.Softtek.Infrastructure;
 using Tp.Integrador.Softtek.Services;
 
 namespace Tp.Integrador.Softtek.Controllers
 {
+    ///<summary>
+    ///     Servicios para guardar, eliminar, modificar y listar los usuarios
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -21,99 +25,118 @@ namespace Tp.Integrador.Softtek.Controllers
             _mapper = mapper;
         }
 
-        /// <summary> Obtiene todos los usuarios </summary>
-        /// <returns> Lista de todos los usuarios </returns>
+        /// <summary>
+        ///     Obtiene todos los usuarios registrados
+        /// </summary>
+        /// <returns>Todos los usuarios</returns>
+        // GET: api/Users
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers()
         {
             IEnumerable<User> usersList = await _unitOfWork.UsersRepository.GetAll();
 
-            return Ok(_mapper.Map<IEnumerable<UserDto>>(usersList));
+            if (usersList == null)
+            {
+                return ResponseFactory.CreateErrorResponse(404, "No se encontraron usuarios");
+            }
+
+            return ResponseFactory.CreateSuccessResponse(200, usersList);  //Ok(_mapper.Map<IEnumerable<UserDto>>(usersList));
         }
 
-        /// <summary> Obtiene el usuario solicitado si es que existe </summary>
-        /// <returns> Un usuario </returns>
+        /// <summary>
+        ///     Obtiene un usuario de acuerdo a su Id
+        /// </summary>
+        /// <param name="id">Id del usuario</param>
+        /// <returns>Los datos del usuario</returns>
+        // GET: api/Users/1
         [HttpGet("{id}", Name = "GetUserById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize]
-        public async Task<ActionResult<UserDto>> GetUser(int id)
+        public async Task<IActionResult> GetUser([FromRoute] int id)
         {
             if (id == 0)
             {
-                return BadRequest();
+                return ResponseFactory.CreateErrorResponse(400, "Los datos ingresados son incorrectos");
             }
 
             var user = await _unitOfWork.UsersRepository.GetById(u => u.UserId == id);
             if (user != null)
             {
-                return Ok(_mapper.Map<UserDto>(user));
+                return ResponseFactory.CreateSuccessResponse(200, user);  //Ok(_mapper.Map<UserDto>(user));
             }
 
-            return NotFound();
+            return ResponseFactory.CreateErrorResponse(404, "No se encontró el usuario con ese código");
         }
 
-        /// <summary> Crea un nuevo registro de usuario </summary>
-        /// <returns> Mensaje de confirmación </returns>
+        /// <summary>
+        ///     Permite registrar un nuevo usuario
+        /// </summary>
+        /// <returns>Nuevo usuario guardado correctamente</returns>
+        /// <param name="userDto">Datos del usuario</param>
+        // POST: api/Users
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Policy = "Admin")]
-        public async Task<ActionResult<UserDto>> PostUser([FromBody] UserDto userDto)
+        public async Task<IActionResult> PostUser([FromBody] UserDto userDto)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || userDto == null)
             {
-                return BadRequest(ModelState);
-            }
-
-            if (userDto == null)
-            {
-                return BadRequest(userDto);
+                return ResponseFactory.CreateErrorResponse(400, "No se pudo guardar el nuevo usuario");
             }
 
             User userModel = _mapper.Map<User>(userDto);
-            userModel.Password = PasswordEncryptHelper.EncryptPassword(userModel.Password);
+            userModel.Password = PasswordEncryptHelper.EncryptPassword(userModel.Password, userModel.Email);
             await _unitOfWork.UsersRepository.Create(userModel);
 
-            return CreatedAtRoute("GetUserById", new { id = userDto.UserId }, userDto);
+            return ResponseFactory.CreateSuccessResponse(201, "Nuevo usuario guardado correctamente"); //CreatedAtRoute("GetUserById", new { id = userDto.UserId }, userDto);
         }
 
-        /// <summary> Modifica un registro de usuario si es que existe </summary>
-        /// <returns> Mensaje de confirmación </returns>
+        /// <summary>
+        ///     Modifica un usuario
+        /// </summary>
+        /// <returns>El usuario se actualizó correctamente</returns>
+        /// <param name="id">Id del usuario a modificar</param>
+        /// <param name="userDto">Datos del usuario</param>
+        // PUT: api/Users/1
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> PutUser(int id, [FromBody] UserDto userDto)
+        public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] UserDto userDto)
         {
             if (userDto == null || id != userDto.UserId)
             {
-                return BadRequest();
+                return ResponseFactory.CreateErrorResponse(400, "Los datos ingresados son incorrectos");
             }
 
             User userModel = _mapper.Map<User>(userDto);
             await _unitOfWork.UsersRepository.Update(userModel);
-            
-            return NoContent();
+
+            return ResponseFactory.CreateSuccessResponse(200, "El usuario se actualizó correctamente");
         }
 
-        /// <summary> Elimina un registro de usuario si es que existe </summary>
-        /// <returns> Mensaje de confirmación </returns>
+        /// <summary>
+        ///     Permite borrar un usuario
+        /// </summary>
+        /// <returns>El usuario se eliminó exitosamente</returns>
+        /// <param name="id">Id del usuario a borrar</param>
+        // DELETE: api/Users/1
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser([FromRoute] int id)
         {
             if (id == 0)
             {
-                return BadRequest();
+                return ResponseFactory.CreateErrorResponse(400, "Los datos ingresados son incorrectos");
             }
 
             var user = await _unitOfWork.UsersRepository.GetById(u => u.UserId == id);
@@ -121,22 +144,42 @@ namespace Tp.Integrador.Softtek.Controllers
             {
                 user.IsActive = false;
                 await _unitOfWork.UsersRepository.Delete(user);
-                return NoContent();
+                return ResponseFactory.CreateSuccessResponse(200, "El usuario se eliminó exitosamente");
             }
 
-            return NotFound();
+            return ResponseFactory.CreateErrorResponse(404, "No se encontró el usuario con ese código");
         }
 
+        /// <summary>
+        ///     Permite registrar un usuario
+        /// </summary>
+        /// <returns>Usuario nuevo registrado correctamente</returns>
+        /// <param name="registerDto">Datos del usuario</param>
+        // DELETE: api/Users/Register
         [HttpPost]
         [Route("Register")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
+            if(registerDto.RoleId == 0)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Registro incorrecto");
+            }
+
+            if (await _unitOfWork.UsersRepository.UserExist(registerDto.Email))
+            {
+                return ResponseFactory.CreateErrorResponse(409, $"Ya existe un usuario registrado con el e-mail {registerDto.Email}");
+            }
+
             User user = new User(registerDto);
             await _unitOfWork.UsersRepository.Insert(user);
+            
             await _unitOfWork.Complete();
 
-            return Ok("Se ha registrado correctamente");
+            return ResponseFactory.CreateSuccessResponse(201, "Usuario nuevo registrado correctamente");
         }
     }
 }
