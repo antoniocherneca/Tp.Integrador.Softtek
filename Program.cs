@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using Tp.Integrador.Softtek.DataAccess;
@@ -21,6 +22,11 @@ namespace Tp.Integrador.Softtek
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "UmsaSofttek", Version = "v1" });
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "Autorizacion JWT",
@@ -47,13 +53,6 @@ namespace Tp.Integrador.Softtek
                 options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection")
             );
 
-            // builder.Services.AddScoped<IUsersRepository, UsersRepository>();
-            // builder.Services.AddScoped<IServicesRepository, ServicesRepository>();
-            // builder.Services.AddScoped<IJobsRepository, JobsRepository>();
-            // builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
-            // builder.Services.AddScoped<IRolesRepository, RolesRepository>();
-            // builder.Services.AddScoped<IProjectStatusesRepository, ProjectStatusesRepository>();
-
             builder.Services.AddAutoMapper(typeof(MappingConfig));
             builder.Services.AddScoped<IUnitOfWork, UnitOfWorkService>();
 
@@ -62,7 +61,7 @@ namespace Tp.Integrador.Softtek
                 options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, "1"));
             });
 
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters()
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),

@@ -1,8 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using Tp.Integrador.Softtek.DataAccess.Repositories.Interfaces;
 using Tp.Integrador.Softtek.DTOs;
 using Tp.Integrador.Softtek.Entities;
@@ -30,7 +26,12 @@ namespace Tp.Integrador.Softtek.DataAccess.Repositories
 
         public async Task<User?> AuthenticateCredentials(AuthenticateDto authDto)
         {
-            return await _context.Users.SingleOrDefaultAsync(u => u.Email == authDto.Email && u.Password == PasswordEncryptHelper.EncryptPassword(authDto.Password));
+            return await _context.Users.Include(u => u.Role).SingleOrDefaultAsync(u => u.Email == authDto.Email && u.Password == PasswordEncryptHelper.EncryptPassword(authDto.Password, authDto.Email));
+        }
+
+        public async Task<bool> UserExist(string email)
+        {
+            return await _context.Users.AnyAsync(u => u.Email == email);
         }
     }
 }

@@ -2,10 +2,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tp.Integrador.Softtek.Entities;
+using Tp.Integrador.Softtek.Infrastructure;
 using Tp.Integrador.Softtek.Services;
 
 namespace Tp.Integrador.Softtek.Controllers
 {
+    ///<summary>
+    ///     Servicios para guardar, eliminar, modificar y listar los servicios
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class ServicesController : ControllerBase
@@ -19,98 +23,117 @@ namespace Tp.Integrador.Softtek.Controllers
             _mapper = mapper;
         }
 
-        /// <summary> Obtiene todos los servicios </summary>
-        /// <returns> Lista de todos los servicios </returns>
+        /// <summary>
+        ///     Obtiene todos los servicios registrados
+        /// </summary>
+        /// <returns>Todos los servicios</returns>
+        // GET: api/Services
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<ServiceDto>>> GetAllServices()
+        public async Task<IActionResult> GetAllServices()
         {
             IEnumerable<Service> servicesList = await _unitOfWork.ServicesRepository.GetAll();
 
-            return Ok(_mapper.Map<IEnumerable<ServiceDto>>(servicesList));
+            if (servicesList == null)
+            {
+                return ResponseFactory.CreateErrorResponse(404, "No se encontraron servicios");
+            }
+
+            return ResponseFactory.CreateSuccessResponse(200, servicesList);  //Ok(_mapper.Map<IEnumerable<ServiceDto>>(servicesList));
         }
 
-        /// <summary> Obtiene el servicio solicitado si es que existe </summary>
-        /// <returns> Un servicio </returns>
+        /// <summary>
+        ///     Obtiene un servicio de acuerdo a su Id
+        /// </summary>
+        /// <param name="id">Id del servicio</param>
+        /// <returns>Los datos del servicio</returns>
+        // GET: api/Services/1
         [HttpGet("{id}", Name = "GetServiceById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize]
-        public async Task<ActionResult<ServiceDto>> GetService(int id)
+        public async Task<IActionResult> GetService([FromRoute] int id)
         {
             if (id == 0)
             {
-                return BadRequest();
+                return ResponseFactory.CreateErrorResponse(400, "Los datos ingresados son incorrectos");
             }
 
             var service = await _unitOfWork.ServicesRepository.GetById(s => s.SeviceId == id);
             if (service != null)
             {
-                return Ok(_mapper.Map<ServiceDto>(service));
+                return ResponseFactory.CreateSuccessResponse(200, service); //Ok(_mapper.Map<ServiceDto>(service));
             }
 
-            return NotFound();
+            return ResponseFactory.CreateErrorResponse(404, "No se encontró el servicio con ese código");
         }
 
-        /// <summary> Crea un nuevo registro de servicio </summary>
-        /// <returns> Mensaje de confirmación </returns>
+        /// <summary>
+        ///     Permite registrar un nuevo servicio
+        /// </summary>
+        /// <returns>Nuevo servicio guardado correctamente</returns>
+        /// <param name="serviceDto">Datos del servicio</param>
+        // POST: api/Services
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [Authorize(Policy = "Admin")]
-        public async Task<ActionResult<ServiceDto>> PostService([FromBody] ServiceDto serviceDto)
+        public async Task<IActionResult> PostService([FromBody] ServiceDto serviceDto)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || serviceDto == null)
             {
-                return BadRequest(ModelState);
-            }
-
-            if (serviceDto == null)
-            {
-                return BadRequest(serviceDto);
+                return ResponseFactory.CreateErrorResponse(400, "No se pudo guardar el nuevo servicio");
             }
 
             Service serviceModel = _mapper.Map<Service>(serviceDto);
             await _unitOfWork.ServicesRepository.Create(serviceModel);
 
-            return CreatedAtRoute("GetServiceById", new { id = serviceDto.SeviceId }, serviceDto);
+            return ResponseFactory.CreateSuccessResponse(201, "Nuevo servicio guardado correctamente");  //CreatedAtRoute("GetServiceById", new { id = serviceDto.ServiceId }, serviceDto);
         }
 
-        /// <summary> Modifica un registro de servicio si es que existe </summary>
-        /// <returns> Mensaje de confirmación </returns>
+        /// <summary>
+        ///     Modifica un servicio
+        /// </summary>
+        /// <returns>El servicio se actualizó correctamente</returns>
+        /// <param name="id">Id del servicio a modificar</param>
+        /// <param name="serviceDto">Datos del servicio</param>
+        // PUT: api/Services/1
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> PutService(int id, [FromBody] ServiceDto serviceDto)
+        public async Task<IActionResult> PutService([FromRoute] int id, [FromBody] ServiceDto serviceDto)
         {
             if (serviceDto == null || id != serviceDto.SeviceId)
             {
-                return BadRequest();
+                return ResponseFactory.CreateErrorResponse(400, "Los datos ingresados son incorrectos");
             }
 
             Service serviceModel = _mapper.Map<Service>(serviceDto);
             await _unitOfWork.ServicesRepository.Update(serviceModel);
 
-            return NoContent();
+            return ResponseFactory.CreateSuccessResponse(200, "El servicio se actualizó correctamente");
         }
 
-        /// <summary> Elimina un registro de servicio si es que existe </summary>
-        /// <returns> Mensaje de confirmación </returns>
+        /// <summary>
+        ///     Permite borrar un servicio
+        /// </summary>
+        /// <returns>El servicio se eliminó exitosamente</returns>
+        /// <param name="id">Id del servicio a borrar</param>
+        // DELETE: api/Services/1
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> DeleteService(int id)
+        public async Task<IActionResult> DeleteService([FromRoute] int id)
         {
             if (id == 0)
             {
-                return BadRequest();
+                return ResponseFactory.CreateErrorResponse(400, "Los datos ingresados son incorrectos");
             }
 
             var service = await _unitOfWork.ServicesRepository.GetById(s => s.SeviceId == id);
@@ -118,10 +141,10 @@ namespace Tp.Integrador.Softtek.Controllers
             {
                 service.IsActive = false;
                 await _unitOfWork.ServicesRepository.Delete(service);
-                return NoContent();
+                return ResponseFactory.CreateSuccessResponse(200, "El servicio se eliminó exitosamente");
             }
 
-            return NotFound();
+            return ResponseFactory.CreateErrorResponse(404, "No se encontró el servicio con ese código");
         }
     }
 }
