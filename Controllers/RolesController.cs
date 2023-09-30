@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tp.Integrador.Softtek.Entities;
+using Tp.Integrador.Softtek.Helpers;
 using Tp.Integrador.Softtek.Infrastructure;
 using Tp.Integrador.Softtek.Services;
 
@@ -34,14 +35,22 @@ namespace Tp.Integrador.Softtek.Controllers
         [Authorize]
         public async Task<IActionResult> GetAllRoles()
         {
-            IEnumerable<Role> rolesList = await _unitOfWork.RolesRepository.GetAll();
+            List<Role> rolesList = await _unitOfWork.RolesRepository.GetAll();
 
             if (rolesList == null)
             {
                 return ResponseFactory.CreateErrorResponse(404, "No se encontraron roles de usuario");
             }
 
-            return ResponseFactory.CreateSuccessResponse(200, rolesList);  //Ok(_mapper.Map<IEnumerable<RoleDto>>(rolesList));
+            List<RoleDto> rolesDtoList = _mapper.Map<List<RoleDto>>(rolesList);
+
+            int pageToShow = 1;
+            if (Request.Query.ContainsKey("page")) int.TryParse(Request.Query["page"], out pageToShow);
+
+            var url = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}").ToString();
+            var paginateRoles = PaginateHelper.Paginate(rolesDtoList, pageToShow, url);
+
+            return ResponseFactory.CreateSuccessResponse(200, paginateRoles);
         }
 
         /// <summary>
@@ -62,10 +71,12 @@ namespace Tp.Integrador.Softtek.Controllers
                 return ResponseFactory.CreateErrorResponse(400, "Los datos ingresados son incorrectos");
             }
 
-            var role = await _unitOfWork.RolesRepository.GetById(r => r.RoleId == id);
+            Role role = await _unitOfWork.RolesRepository.GetById(r => r.RoleId == id);
+            RoleDto roleDto = _mapper.Map<RoleDto>(role);
+
             if (role != null)
             {
-                return ResponseFactory.CreateSuccessResponse(200, role);  // Ok(_mapper.Map<RoleDto>(role));
+                return ResponseFactory.CreateSuccessResponse(200, roleDto);  // Ok(_mapper.Map<RoleDto>(role));
             }
 
             return ResponseFactory.CreateErrorResponse(404, "No se encontró el rol de usuario con ese código");
@@ -75,21 +86,22 @@ namespace Tp.Integrador.Softtek.Controllers
         ///     Permite registrar un nuevo rol de usuario
         /// </summary>
         /// <returns>Nuevo rol de usuario guardado correctamente</returns>
-        /// <param name="roleDto">Datos del rol de usuario</param>
+        /// <param name="roleCreateDto">Datos del rol de usuario</param>
         // POST: api/Roles
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> PostRole([FromBody] RoleDto roleDto)
+        public async Task<IActionResult> PostRole([FromBody] RoleDto roleCreateDto)
         {
-            if (!ModelState.IsValid || roleDto == null)
+            if (!ModelState.IsValid || roleCreateDto == null)
             {
                 return ResponseFactory.CreateErrorResponse(400, "No se pudo guardar el nuevo rol de usuario");
             }
 
-            Role roleModel = _mapper.Map<Role>(roleDto);
-            await _unitOfWork.RolesRepository.Create(roleModel);
+            Role role = _mapper.Map<Role>(roleCreateDto);
+            role.IsDeleted = false;
+            await _unitOfWork.RolesRepository.Create(role);
 
             return ResponseFactory.CreateSuccessResponse(201, "Nuevo rol de usuario guardado correctamente");  //CreatedAtRoute("GetRoleById", new { id = roleDto.RoleId }, roleDto);
         }
@@ -99,21 +111,21 @@ namespace Tp.Integrador.Softtek.Controllers
         /// </summary>
         /// <returns>El rol de usuario se actualizó correctamente</returns>
         /// <param name="id">Id del rol de usuario a modificar</param>
-        /// <param name="roleDto">Datos del rol de usuario</param>
+        /// <param name="roleUpdateDto">Datos del rol de usuario</param>
         // PUT: api/Roles/1
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> PutRole([FromRoute] int id, [FromBody] RoleDto roleDto)
+        public async Task<IActionResult> PutRole([FromRoute] int id, [FromBody] RoleUpdateDto roleUpdateDto)
         {
-            if (roleDto == null || id != roleDto.RoleId)
+            if (roleUpdateDto == null || id != roleUpdateDto.RoleId)
             {
                 return ResponseFactory.CreateErrorResponse(400, "Los datos ingresados son incorrectos");
             }
 
-            Role roleModel = _mapper.Map<Role>(roleDto);
-            await _unitOfWork.RolesRepository.Update(roleModel);
+            Role role = _mapper.Map<Role>(roleUpdateDto);
+            await _unitOfWork.RolesRepository.Update(role);
 
             return ResponseFactory.CreateSuccessResponse(200, "El rol de usuario se actualizó correctamente");
         }
@@ -139,9 +151,9 @@ namespace Tp.Integrador.Softtek.Controllers
             var role = await _unitOfWork.RolesRepository.GetById(r => r.RoleId == id);
             if (role != null)
             {
-                role.IsActive = false;
+                role.IsDeleted = true;
                 await _unitOfWork.RolesRepository.Delete(role);
-                return ResponseFactory.CreateSuccessResponse(200, "El rol de usuario se eliminó exitosamente");
+                return ResponseFactory.CreateSuccessResponse(200, "El rol de usuario se eliminó correctamente");
             }
 
             return ResponseFactory.CreateErrorResponse(404, "No se encontró el rol de usuario con ese código");

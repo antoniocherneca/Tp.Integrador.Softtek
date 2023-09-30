@@ -18,7 +18,7 @@ namespace Tp.Integrador.Softtek.Entities
         {
             this.RoleId = roleDto.RoleId;
             this.RoleName = roleDto.RoleName;
-            this.IsActive = roleDto.IsActive;
+            this.IsDeleted = roleDto.IsDeleted;
         }
 
         /// <summary>
@@ -42,6 +42,6 @@ namespace Tp.Integrador.Softtek.Entities
         /// </summary>
         /// <value>El rol de usuario está eliminado o no</value>
         [Required, Column(TypeName = "BIT")]
-        public bool IsActive { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

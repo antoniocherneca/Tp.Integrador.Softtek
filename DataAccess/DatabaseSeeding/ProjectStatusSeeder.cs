@@ -12,17 +12,20 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                 new ProjectStatus
                 {
                     ProjectStatusId = 1,
-                    ProjectStatusName = "Pendiente"
+                    ProjectStatusName = "Pendiente",
+                    IsDeleted = false,
                 },
                 new ProjectStatus
                 {
                     ProjectStatusId = 2,
-                    ProjectStatusName = "Confirmado"
+                    ProjectStatusName = "Confirmado",
+                    IsDeleted = false,
                 },
                 new ProjectStatus
                 {
                     ProjectStatusId = 3,
-                    ProjectStatusName = "Terminado"
+                    ProjectStatusName = "Terminado",
+                    IsDeleted = false,
                 }
             );
         }

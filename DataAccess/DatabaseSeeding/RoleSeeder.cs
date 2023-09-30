@@ -12,12 +12,14 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                 new Role
                 {
                     RoleId = 1,
-                    RoleName = "Administrador"
+                    RoleName = "Administrador",
+                    IsDeleted = false,
                 },
                 new Role
                 {
                     RoleId = 2,
-                    RoleName = "Consultor"
+                    RoleName = "Consultor",
+                    IsDeleted = false,
                 }
             );
         }
