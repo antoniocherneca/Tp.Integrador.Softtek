@@ -15,7 +15,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     ProjectName = "Proyecto 1",
                     Address = "Dirección 1",
                     ProjectStatusId = 1,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Project
                 {
@@ -23,7 +23,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     ProjectName = "Proyecto 2",
                     Address = "Dirección 2",
                     ProjectStatusId = 1,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Project
                 {
@@ -31,7 +31,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     ProjectName = "Proyecto 3",
                     Address = "Dirección 3",
                     ProjectStatusId = 2,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Project
                 {
@@ -39,7 +39,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     ProjectName = "Proyecto 4",
                     Address = "Dirección 4",
                     ProjectStatusId = 2,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Project
                 {
@@ -47,7 +47,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     ProjectName = "Proyecto 5",
                     Address = "Dirección 5",
                     ProjectStatusId = 3,
-                    IsActive = true
+                    IsDeleted = false,
                 }
             );
         }

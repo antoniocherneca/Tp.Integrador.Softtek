@@ -19,7 +19,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Email = "jperez@gmail.com",
                     Password = PasswordEncryptHelper.EncryptPassword("123456", "jperez@gmail.com"),
                     RoleId = 1,
-                    IsActive = true
+                    IsDeleted = false
                 },
                 new User
                 {
@@ -29,7 +29,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Email = "mlopez@gmail.com",
                     Password = PasswordEncryptHelper.EncryptPassword("123456", "mlopez@gmail.com"),
                     RoleId = 2,
-                    IsActive = true
+                    IsDeleted = false
                 },
                 new User
                 {
@@ -39,7 +39,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Email = "pramirez@gmail.com",
                     Password = PasswordEncryptHelper.EncryptPassword("123456", "pramirez@gmail.com"),
                     RoleId = 2,
-                    IsActive = true
+                    IsDeleted = false
                 }
             );
         }

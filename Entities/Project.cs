@@ -39,7 +39,7 @@ namespace Tp.Integrador.Softtek.Entities
         /// </summary>
         /// <value>El proyecto está eliminado o no</value>
         [Required, Column(TypeName = "BIT")]
-        public bool IsActive { get; set; }
+        public bool IsDeleted { get; set; }
 
         /// <summary>
         ///     Obtiene o establece el Id del estado del proyecto

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tp.Integrador.Softtek.Entities;
+using Tp.Integrador.Softtek.Helpers;
 using Tp.Integrador.Softtek.Infrastructure;
 using Tp.Integrador.Softtek.Services;
 
@@ -34,14 +35,22 @@ namespace Tp.Integrador.Softtek.Controllers
         [Authorize]
         public async Task<IActionResult> GetAllProjectStatuses()
         {
-            IEnumerable<ProjectStatus> projectStatusesList = await _unitOfWork.ProjectStatusesRepository.GetAll();
+            List<ProjectStatus> projectStatusesList = await _unitOfWork.ProjectStatusesRepository.GetAll();
 
             if (projectStatusesList == null)
             {
                 return ResponseFactory.CreateErrorResponse(404, "No se encontraron estados de proyecto");
             }
 
-            return ResponseFactory.CreateSuccessResponse(200, projectStatusesList);  //Ok(_mapper.Map<IEnumerable<ProjectStatusDto>>(projectStatusesList));
+            List<ProjectStatusDto> projectStatusesDtoList = _mapper.Map<List<ProjectStatusDto>>(projectStatusesList);
+
+            int pageToShow = 1;
+            if (Request.Query.ContainsKey("page")) int.TryParse(Request.Query["page"], out pageToShow);
+
+            var url = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}").ToString();
+            var paginateProjectStatuses = PaginateHelper.Paginate(projectStatusesDtoList, pageToShow, url);
+
+            return ResponseFactory.CreateSuccessResponse(200, paginateProjectStatuses);
         }
 
         /// <summary>
@@ -62,10 +71,11 @@ namespace Tp.Integrador.Softtek.Controllers
                 return ResponseFactory.CreateErrorResponse(400, "Los datos ingresados son incorrectos");
             }
 
-            var projectStatuses = await _unitOfWork.ProjectStatusesRepository.GetById(ps => ps.ProjectStatusId == id);
-            if (projectStatuses != null)
+            ProjectStatus projectStatus = await _unitOfWork.ProjectStatusesRepository.GetById(ps => ps.ProjectStatusId == id);
+            ProjectStatusDto projectStatusDto = _mapper.Map<ProjectStatusDto>(projectStatus);
+            if (projectStatus != null)
             {
-                return ResponseFactory.CreateSuccessResponse(200, projectStatuses);  //Ok(_mapper.Map<ProjectStatusDto>(projectStatuses));
+                return ResponseFactory.CreateSuccessResponse(200, projectStatusDto);
             }
 
             return ResponseFactory.CreateErrorResponse(404, "No se encontró el estado de proyecto con ese código");
@@ -75,21 +85,22 @@ namespace Tp.Integrador.Softtek.Controllers
         ///     Permite registrar un nuevo estado de proyecto
         /// </summary>
         /// <returns>Nuevo estado de proyecto guardado correctamente</returns>
-        /// <param name="projectStatusDto">Datos del estado de proyecto</param>
+        /// <param name="projectStatusCreateDto">Datos del estado de proyecto</param>
         // POST: api/ProjectStatuses
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> PostProjectStatus([FromBody] ProjectStatusDto projectStatusDto)
+        public async Task<IActionResult> PostProjectStatus([FromBody] ProjectStatusCreateDto projectStatusCreateDto)
         {
-            if (!ModelState.IsValid || projectStatusDto == null)
+            if (!ModelState.IsValid || projectStatusCreateDto == null)
             {
                 return ResponseFactory.CreateErrorResponse(400, "No se pudo guardar el nuevo estado de proyecto");
             }
 
-            ProjectStatus projectStatusModel = _mapper.Map<ProjectStatus>(projectStatusDto);
-            await _unitOfWork.ProjectStatusesRepository.Create(projectStatusModel);
+            ProjectStatus projectStatus = _mapper.Map<ProjectStatus>(projectStatusCreateDto);
+            projectStatus.IsDeleted = false;
+            await _unitOfWork.ProjectStatusesRepository.Create(projectStatus);
 
             return ResponseFactory.CreateSuccessResponse(201, "Nuevo estado de proyecto guardado correctamente");  //CreatedAtRoute("GetProjectStatusById", new { id = projectStatusDto.ProjectStatusId }, projectStatusDto);
         }
@@ -99,21 +110,21 @@ namespace Tp.Integrador.Softtek.Controllers
         /// </summary>
         /// <returns>El estado de proyecto se actualizó correctamente</returns>
         /// <param name="id">Id del estado de proyecto a modificar</param>
-        /// <param name="projectStatusDto">Datos del estado de proyecto</param>
+        /// <param name="projectStatusUpdateDto">Datos del estado de proyecto</param>
         // PUT: api/ProjectStatuses/1
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> PutProjectStatus([FromRoute] int id, [FromBody] ProjectStatusDto projectStatusDto)
+        public async Task<IActionResult> PutProjectStatus([FromRoute] int id, [FromBody] ProjectStatusUpdateDto projectStatusUpdateDto)
         {
-            if (projectStatusDto == null || id != projectStatusDto.ProjectStatusId)
+            if (projectStatusUpdateDto == null || id != projectStatusUpdateDto.ProjectStatusId)
             {
                 return ResponseFactory.CreateErrorResponse(400, "Los datos ingresados son incorrectos");
             }
 
-            ProjectStatus projectStatusModel = _mapper.Map<ProjectStatus>(projectStatusDto);
-            await _unitOfWork.ProjectStatusesRepository.Update(projectStatusModel);
+            ProjectStatus projectStatus = _mapper.Map<ProjectStatus>(projectStatusUpdateDto);
+            await _unitOfWork.ProjectStatusesRepository.Update(projectStatus);
 
             return ResponseFactory.CreateSuccessResponse(200, "El estado de proyecto se actualizó correctamente");
         }
@@ -139,9 +150,9 @@ namespace Tp.Integrador.Softtek.Controllers
             var projectStatus = await _unitOfWork.ProjectStatusesRepository.GetById(ps => ps.ProjectStatusId == id);
             if (projectStatus != null)
             {
-                projectStatus.IsActive = false;
+                projectStatus.IsDeleted = true;
                 await _unitOfWork.ProjectStatusesRepository.Delete(projectStatus);
-                return ResponseFactory.CreateSuccessResponse(200, "El estado de proyecto se eliminó exitosamente");
+                return ResponseFactory.CreateSuccessResponse(200, "El estado de proyecto se eliminó correctamente");
             }
 
             return ResponseFactory.CreateErrorResponse(404, "No se encontró el estado de proyecto con ese código");

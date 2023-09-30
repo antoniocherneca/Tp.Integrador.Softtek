@@ -1,6 +1,6 @@
-﻿namespace Tp.Integrador.Softtek.DTOs
+﻿namespace Tp.Integrador.Softtek.Entities
 {
-    public class RegisterDto
+    public class UserCreateDto
     {
         public string UserName { get; set; }
         public string Dni { get; set; }

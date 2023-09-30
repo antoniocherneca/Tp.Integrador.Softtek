@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tp.Integrador.Softtek.DataAccess;
 
@@ -11,9 +12,10 @@ using Tp.Integrador.Softtek.DataAccess;
 namespace Tp.Integrador.Softtek.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230930045148_serviceId change")]
+    partial class serviceIdchange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,7 +38,7 @@ namespace Tp.Integrador.Softtek.Migrations
                     b.Property<decimal>("HourValue")
                         .HasColumnType("MONEY");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("BIT");
 
                     b.Property<DateTime>("JobDate")
@@ -65,7 +67,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             JobId = 1,
                             Cost = 138.6m,
                             HourValue = 19.8m,
-                            IsDeleted = false,
+                            IsActive = true,
                             JobDate = new DateTime(2020, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NumberOfHours = 7,
                             ProjectId = 3,
@@ -76,7 +78,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             JobId = 2,
                             Cost = 1257.6m,
                             HourValue = 26.2m,
-                            IsDeleted = false,
+                            IsActive = true,
                             JobDate = new DateTime(2020, 9, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NumberOfHours = 18,
                             ProjectId = 3,
@@ -87,7 +89,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             JobId = 3,
                             Cost = 369.6m,
                             HourValue = 16.8m,
-                            IsDeleted = false,
+                            IsActive = true,
                             JobDate = new DateTime(2019, 3, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NumberOfHours = 22,
                             ProjectId = 3,
@@ -98,7 +100,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             JobId = 4,
                             Cost = 396.9m,
                             HourValue = 18.9m,
-                            IsDeleted = false,
+                            IsActive = true,
                             JobDate = new DateTime(2016, 9, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NumberOfHours = 21,
                             ProjectId = 4,
@@ -109,7 +111,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             JobId = 5,
                             Cost = 718.75m,
                             HourValue = 31.25m,
-                            IsDeleted = false,
+                            IsActive = true,
                             JobDate = new DateTime(2017, 12, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NumberOfHours = 23,
                             ProjectId = 4,
@@ -120,7 +122,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             JobId = 6,
                             Cost = 338.28m,
                             HourValue = 28.19m,
-                            IsDeleted = false,
+                            IsActive = true,
                             JobDate = new DateTime(2019, 2, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NumberOfHours = 12,
                             ProjectId = 5,
@@ -131,7 +133,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             JobId = 7,
                             Cost = 387.47m,
                             HourValue = 29.89m,
-                            IsDeleted = false,
+                            IsActive = true,
                             JobDate = new DateTime(2018, 9, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NumberOfHours = 23,
                             ProjectId = 5,
@@ -142,7 +144,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             JobId = 8,
                             Cost = 722.88m,
                             HourValue = 30.12m,
-                            IsDeleted = false,
+                            IsActive = true,
                             JobDate = new DateTime(2017, 12, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NumberOfHours = 24,
                             ProjectId = 5,
@@ -153,7 +155,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             JobId = 9,
                             Cost = 560.04m,
                             HourValue = 21.54m,
-                            IsDeleted = false,
+                            IsActive = true,
                             JobDate = new DateTime(2019, 11, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NumberOfHours = 26,
                             ProjectId = 5,
@@ -164,7 +166,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             JobId = 10,
                             Cost = 971.2m,
                             HourValue = 30.35m,
-                            IsDeleted = false,
+                            IsActive = true,
                             JobDate = new DateTime(2021, 10, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NumberOfHours = 32,
                             ProjectId = 4,
@@ -175,7 +177,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             JobId = 11,
                             Cost = 471.2m,
                             HourValue = 24.8m,
-                            IsDeleted = false,
+                            IsActive = true,
                             JobDate = new DateTime(2020, 8, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NumberOfHours = 19,
                             ProjectId = 4,
@@ -186,7 +188,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             JobId = 12,
                             Cost = 530.1m,
                             HourValue = 29.45m,
-                            IsDeleted = false,
+                            IsActive = true,
                             JobDate = new DateTime(2021, 3, 26, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NumberOfHours = 18,
                             ProjectId = 3,
@@ -197,7 +199,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             JobId = 13,
                             Cost = 937.44m,
                             HourValue = 30.24m,
-                            IsDeleted = false,
+                            IsActive = true,
                             JobDate = new DateTime(2022, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NumberOfHours = 31,
                             ProjectId = 5,
@@ -218,7 +220,7 @@ namespace Tp.Integrador.Softtek.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("VARCHAR(200)");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("BIT");
 
                     b.Property<string>("ProjectName")
@@ -240,7 +242,7 @@ namespace Tp.Integrador.Softtek.Migrations
                         {
                             ProjectId = 1,
                             Address = "Dirección 1",
-                            IsDeleted = false,
+                            IsActive = true,
                             ProjectName = "Proyecto 1",
                             ProjectStatusId = 1
                         },
@@ -248,7 +250,7 @@ namespace Tp.Integrador.Softtek.Migrations
                         {
                             ProjectId = 2,
                             Address = "Dirección 2",
-                            IsDeleted = false,
+                            IsActive = true,
                             ProjectName = "Proyecto 2",
                             ProjectStatusId = 1
                         },
@@ -256,7 +258,7 @@ namespace Tp.Integrador.Softtek.Migrations
                         {
                             ProjectId = 3,
                             Address = "Dirección 3",
-                            IsDeleted = false,
+                            IsActive = true,
                             ProjectName = "Proyecto 3",
                             ProjectStatusId = 2
                         },
@@ -264,7 +266,7 @@ namespace Tp.Integrador.Softtek.Migrations
                         {
                             ProjectId = 4,
                             Address = "Dirección 4",
-                            IsDeleted = false,
+                            IsActive = true,
                             ProjectName = "Proyecto 4",
                             ProjectStatusId = 2
                         },
@@ -272,7 +274,7 @@ namespace Tp.Integrador.Softtek.Migrations
                         {
                             ProjectId = 5,
                             Address = "Dirección 5",
-                            IsDeleted = false,
+                            IsActive = true,
                             ProjectName = "Proyecto 5",
                             ProjectStatusId = 3
                         });
@@ -286,7 +288,7 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectStatusId"), 1L, 1);
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("BIT");
 
                     b.Property<string>("ProjectStatusName")
@@ -302,19 +304,19 @@ namespace Tp.Integrador.Softtek.Migrations
                         new
                         {
                             ProjectStatusId = 1,
-                            IsDeleted = false,
+                            IsActive = true,
                             ProjectStatusName = "Pendiente"
                         },
                         new
                         {
                             ProjectStatusId = 2,
-                            IsDeleted = false,
+                            IsActive = true,
                             ProjectStatusName = "Confirmado"
                         },
                         new
                         {
                             ProjectStatusId = 3,
-                            IsDeleted = false,
+                            IsActive = true,
                             ProjectStatusName = "Terminado"
                         });
                 });
@@ -327,7 +329,7 @@ namespace Tp.Integrador.Softtek.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"), 1L, 1);
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("BIT");
 
                     b.Property<string>("RoleName")
@@ -343,13 +345,13 @@ namespace Tp.Integrador.Softtek.Migrations
                         new
                         {
                             RoleId = 1,
-                            IsDeleted = false,
+                            IsActive = true,
                             RoleName = "Administrador"
                         },
                         new
                         {
                             RoleId = 2,
-                            IsDeleted = false,
+                            IsActive = true,
                             RoleName = "Consultor"
                         });
                 });
@@ -370,7 +372,7 @@ namespace Tp.Integrador.Softtek.Migrations
                     b.Property<decimal>("HourValue")
                         .HasColumnType("MONEY");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("BIT");
 
                     b.HasKey("ServiceId");
@@ -383,56 +385,56 @@ namespace Tp.Integrador.Softtek.Migrations
                             ServiceId = 1,
                             Description = "Descripción 1",
                             HourValue = 25.87m,
-                            IsDeleted = false
+                            IsActive = true
                         },
                         new
                         {
                             ServiceId = 2,
                             Description = "Descripción 2",
                             HourValue = 31.5m,
-                            IsDeleted = false
+                            IsActive = true
                         },
                         new
                         {
                             ServiceId = 3,
                             Description = "Descripción 3",
                             HourValue = 12.41m,
-                            IsDeleted = false
+                            IsActive = true
                         },
                         new
                         {
                             ServiceId = 4,
                             Description = "Descripción 4",
                             HourValue = 16.05m,
-                            IsDeleted = false
+                            IsActive = true
                         },
                         new
                         {
                             ServiceId = 5,
                             Description = "Descripción 5",
                             HourValue = 8.79m,
-                            IsDeleted = false
+                            IsActive = true
                         },
                         new
                         {
                             ServiceId = 6,
                             Description = "Descripción 6",
                             HourValue = 20.33m,
-                            IsDeleted = false
+                            IsActive = true
                         },
                         new
                         {
                             ServiceId = 7,
                             Description = "Descripción 7",
                             HourValue = 13.5m,
-                            IsDeleted = false
+                            IsActive = true
                         },
                         new
                         {
                             ServiceId = 8,
                             Description = "Descripción 8",
                             HourValue = 22.89m,
-                            IsDeleted = false
+                            IsActive = true
                         });
                 });
 
@@ -454,7 +456,7 @@ namespace Tp.Integrador.Softtek.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("VARCHAR(50)");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("BIT");
 
                     b.Property<string>("Password")
@@ -482,7 +484,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             UserId = 1,
                             Dni = "11111111",
                             Email = "jperez@gmail.com",
-                            IsDeleted = false,
+                            IsActive = true,
                             Password = "3d8fb61d411f3b764e6d3a0134afa7ace88b5608475522853f847e3115ddc1e3",
                             RoleId = 1,
                             UserName = "Juan Perez"
@@ -492,7 +494,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             UserId = 2,
                             Dni = "22222222",
                             Email = "mlopez@gmail.com",
-                            IsDeleted = false,
+                            IsActive = true,
                             Password = "1b6eec4d5d6507ba4b936d2c4a8f33fc06c8b1236688fe46ba7f2d681b9180a2",
                             RoleId = 2,
                             UserName = "Maria Lopez"
@@ -502,7 +504,7 @@ namespace Tp.Integrador.Softtek.Migrations
                             UserId = 3,
                             Dni = "33333333",
                             Email = "pramirez@gmail.com",
-                            IsDeleted = false,
+                            IsActive = true,
                             Password = "f2a29e834c644fb43fdd2b69c67a3e0c9a9b6a060803d4ccc5e39746d4889f35",
                             RoleId = 2,
                             UserName = "Pedro Ramirez"

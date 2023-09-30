@@ -22,7 +22,6 @@ namespace Tp.Integrador.Softtek.Entities
             this.Dni = registerDto.Dni;
             this.Email = registerDto.Email;
             this.Password = PasswordEncryptHelper.EncryptPassword(registerDto.Password, registerDto.Email);
-            this.IsActive = registerDto.IsActive;
             this.RoleId = registerDto.RoleId;
         }
 
@@ -33,7 +32,6 @@ namespace Tp.Integrador.Softtek.Entities
             this.Dni = registerDto.Dni;
             this.Email = registerDto.Email;
             this.Password = PasswordEncryptHelper.EncryptPassword(registerDto.Password, registerDto.Email);
-            this.IsActive = registerDto.IsActive;
             this.RoleId = registerDto.RoleId;
         }
 
@@ -85,7 +83,7 @@ namespace Tp.Integrador.Softtek.Entities
         /// </summary>
         /// <value>El usuario está eliminado o no</value>
         [Required, Column(TypeName = "BIT")]
-        public bool IsActive { get; set; }
+        public bool IsDeleted { get; set; }
 
         /// <summary>
         ///     Obtiene o establece el Id del rol del usuario

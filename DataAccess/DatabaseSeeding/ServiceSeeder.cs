@@ -11,59 +11,59 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
             (
                 new Service
                 {
-                    SeviceId = 1,
+                    ServiceId = 1,
                     Description = "Descripción 1",
                     HourValue = 25.87,
-                    IsActive = true,
+                    IsDeleted = false,
                 },
                 new Service
                 {
-                    SeviceId = 2,
+                    ServiceId = 2,
                     Description = "Descripción 2",
                     HourValue = 31.50,
-                    IsActive = true,
+                    IsDeleted = false,
                 },
                 new Service
                 {
-                    SeviceId = 3,
+                    ServiceId = 3,
                     Description = "Descripción 3",
                     HourValue = 12.41,
-                    IsActive = true,
+                    IsDeleted = false,
                 },
                 new Service
                 {
-                    SeviceId = 4,
+                    ServiceId = 4,
                     Description = "Descripción 4",
                     HourValue = 16.05,
-                    IsActive = true,
+                    IsDeleted = false,
                 },
                 new Service
                 {
-                    SeviceId = 5,
+                    ServiceId = 5,
                     Description = "Descripción 5",
                     HourValue = 8.79,
-                    IsActive = true,
+                    IsDeleted = false,
                 },
                 new Service
                 {
-                    SeviceId = 6,
+                    ServiceId = 6,
                     Description = "Descripción 6",
                     HourValue = 20.33,
-                    IsActive = true,
+                    IsDeleted = false,
                 },
                 new Service
                 {
-                    SeviceId = 7,
+                    ServiceId = 7,
                     Description = "Descripción 7",
                     HourValue = 13.50,
-                    IsActive = true,
+                    IsDeleted = false,
                 },
                 new Service
                 {
-                    SeviceId = 8,
+                    ServiceId = 8,
                     Description = "Descripción 8",
                     HourValue = 22.89,
-                    IsActive = true,
+                    IsDeleted = false,
                 }
             );
         }
