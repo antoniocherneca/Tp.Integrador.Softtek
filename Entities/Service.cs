@@ -14,7 +14,7 @@ namespace Tp.Integrador.Softtek.Entities
         /// </summary>
         /// <value>El Id se incrementa automáticamente</value>
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), Column(TypeName = "INT")]
-        public int SeviceId { get; set; }
+        public int ServiceId { get; set; }
 
         /// <summary>
         ///     Obtiene o establece la descripción del servicio
@@ -38,6 +38,6 @@ namespace Tp.Integrador.Softtek.Entities
         /// </summary>
         /// <value>El servicio está eliminado o no</value>
         [Required, Column(TypeName = "BIT")]
-        public bool IsActive { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

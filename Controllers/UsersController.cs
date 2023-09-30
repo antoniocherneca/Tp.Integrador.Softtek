@@ -36,14 +36,22 @@ namespace Tp.Integrador.Softtek.Controllers
         [Authorize]
         public async Task<IActionResult> GetAllUsers()
         {
-            IEnumerable<User> usersList = await _unitOfWork.UsersRepository.GetAll();
+            List<User> usersList = await _unitOfWork.UsersRepository.GetAll();
 
             if (usersList == null)
             {
                 return ResponseFactory.CreateErrorResponse(404, "No se encontraron usuarios");
             }
 
-            return ResponseFactory.CreateSuccessResponse(200, usersList);  //Ok(_mapper.Map<IEnumerable<UserDto>>(usersList));
+            List<UserNoPassDto> usersNoPassDtoList = _mapper.Map<List<UserNoPassDto>>(usersList);
+
+            int pageToShow = 1;
+            if (Request.Query.ContainsKey("page")) int.TryParse(Request.Query["page"], out pageToShow);
+
+            var url = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}").ToString();
+            var paginateUsers = PaginateHelper.Paginate(usersNoPassDtoList, pageToShow, url);
+
+            return ResponseFactory.CreateSuccessResponse(200, paginateUsers);
         }
 
         /// <summary>
@@ -64,59 +72,64 @@ namespace Tp.Integrador.Softtek.Controllers
                 return ResponseFactory.CreateErrorResponse(400, "Los datos ingresados son incorrectos");
             }
 
-            var user = await _unitOfWork.UsersRepository.GetById(u => u.UserId == id);
+            User user = await _unitOfWork.UsersRepository.GetById(u => u.UserId == id);
+            UserDto userDto = _mapper.Map<UserDto>(user);
+
             if (user != null)
             {
-                return ResponseFactory.CreateSuccessResponse(200, user);  //Ok(_mapper.Map<UserDto>(user));
+                return ResponseFactory.CreateSuccessResponse(200, userDto);
             }
 
             return ResponseFactory.CreateErrorResponse(404, "No se encontró el usuario con ese código");
         }
 
+        /*
         /// <summary>
         ///     Permite registrar un nuevo usuario
         /// </summary>
         /// <returns>Nuevo usuario guardado correctamente</returns>
-        /// <param name="userDto">Datos del usuario</param>
+        /// <param name="userCreateDto">Datos del usuario</param>
         // POST: api/Users
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> PostUser([FromBody] UserDto userDto)
+        public async Task<IActionResult> PostUser([FromBody] UserCreateDto userCreateDto)
         {
-            if (!ModelState.IsValid || userDto == null)
+            if (!ModelState.IsValid || userCreateDto == null)
             {
                 return ResponseFactory.CreateErrorResponse(400, "No se pudo guardar el nuevo usuario");
             }
 
-            User userModel = _mapper.Map<User>(userDto);
-            userModel.Password = PasswordEncryptHelper.EncryptPassword(userModel.Password, userModel.Email);
-            await _unitOfWork.UsersRepository.Create(userModel);
+            User user = _mapper.Map<User>(userCreateDto);
+            user.IsDeleted = false;
+            user.Password = PasswordEncryptHelper.EncryptPassword(user.Password, user.Email);
+            await _unitOfWork.UsersRepository.Create(user);
 
             return ResponseFactory.CreateSuccessResponse(201, "Nuevo usuario guardado correctamente"); //CreatedAtRoute("GetUserById", new { id = userDto.UserId }, userDto);
         }
+        */
 
         /// <summary>
         ///     Modifica un usuario
         /// </summary>
         /// <returns>El usuario se actualizó correctamente</returns>
         /// <param name="id">Id del usuario a modificar</param>
-        /// <param name="userDto">Datos del usuario</param>
+        /// <param name="userUpdateDto">Datos del usuario</param>
         // PUT: api/Users/1
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] UserDto userDto)
+        public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] UserUpdateDto userUpdateDto)
         {
-            if (userDto == null || id != userDto.UserId)
+            if (userUpdateDto == null || id != userUpdateDto.UserId)
             {
                 return ResponseFactory.CreateErrorResponse(400, "Los datos ingresados son incorrectos");
             }
 
-            User userModel = _mapper.Map<User>(userDto);
-            await _unitOfWork.UsersRepository.Update(userModel);
+            User user = _mapper.Map<User>(userUpdateDto);
+            await _unitOfWork.UsersRepository.Update(user);
 
             return ResponseFactory.CreateSuccessResponse(200, "El usuario se actualizó correctamente");
         }
@@ -142,9 +155,9 @@ namespace Tp.Integrador.Softtek.Controllers
             var user = await _unitOfWork.UsersRepository.GetById(u => u.UserId == id);
             if (user != null)
             {
-                user.IsActive = false;
+                user.IsDeleted = true;
                 await _unitOfWork.UsersRepository.Delete(user);
-                return ResponseFactory.CreateSuccessResponse(200, "El usuario se eliminó exitosamente");
+                return ResponseFactory.CreateSuccessResponse(200, "El usuario se eliminó correctamente");
             }
 
             return ResponseFactory.CreateErrorResponse(404, "No se encontró el usuario con ese código");
@@ -175,6 +188,8 @@ namespace Tp.Integrador.Softtek.Controllers
             }
 
             User user = new User(registerDto);
+            user.IsDeleted = false;
+            user.Password = PasswordEncryptHelper.EncryptPassword(user.Password, user.Email);
             await _unitOfWork.UsersRepository.Insert(user);
             
             await _unitOfWork.Complete();

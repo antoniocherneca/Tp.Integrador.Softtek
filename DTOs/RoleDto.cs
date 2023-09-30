@@ -1,10 +1,9 @@
-﻿
-namespace Tp.Integrador.Softtek.Entities
+﻿namespace Tp.Integrador.Softtek.Entities
 {
     public class RoleDto
     {
         public int RoleId { get; set; }
         public string RoleName { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

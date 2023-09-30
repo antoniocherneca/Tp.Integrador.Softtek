@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tp.Integrador.Softtek.Entities;
+using Tp.Integrador.Softtek.Helpers;
 using Tp.Integrador.Softtek.Infrastructure;
 using Tp.Integrador.Softtek.Services;
 
@@ -34,14 +35,22 @@ namespace Tp.Integrador.Softtek.Controllers
         [Authorize]
         public async Task<IActionResult> GetAllProjects()
         {
-            IEnumerable<Project> projectsList = await _unitOfWork.ProjectsRepository.GetAll();
+            var projectsList = await _unitOfWork.ProjectsRepository.GetAll();
 
             if (projectsList == null)
             {
                 return ResponseFactory.CreateErrorResponse(404, "No se encontraron proyectos");
             }
 
-            return ResponseFactory.CreateSuccessResponse(200, projectsList);   //Ok(_mapper.Map<IEnumerable<ProjectDto>>(projectsList));
+            List<ProjectDto> projectsDtoList = _mapper.Map<List<ProjectDto>>(projectsList);
+
+            int pageToShow = 1;
+            if (Request.Query.ContainsKey("page")) int.TryParse(Request.Query["page"], out pageToShow);
+
+            var url = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}").ToString();
+            var paginateProjects = PaginateHelper.Paginate(projectsDtoList, pageToShow, url);
+
+            return ResponseFactory.CreateSuccessResponse(200, paginateProjects);
         }
 
         /// <summary>
@@ -62,9 +71,11 @@ namespace Tp.Integrador.Softtek.Controllers
             }
 
             var project = await _unitOfWork.ProjectsRepository.GetById(p => p.ProjectId == id);
+            ProjectDto projectDto = _mapper.Map<ProjectDto>(project);
+
             if (project != null)
             {
-                return ResponseFactory.CreateSuccessResponse(200, project);  //Ok(_mapper.Map<ProjectDto>(project));
+                return ResponseFactory.CreateSuccessResponse(200, projectDto);
             }
 
             return ResponseFactory.CreateErrorResponse(404, "No se encontró el proyecto con ese código");
@@ -74,21 +85,22 @@ namespace Tp.Integrador.Softtek.Controllers
         ///     Permite registrar un nuevo proyecto
         /// </summary>
         /// <returns>Nuevo proyecto guardado correctamente</returns>
-        /// <param name="projectDto">Datos del proyecto</param>
+        /// <param name="projectCreateDto">Datos del proyecto</param>
         // POST: api/Projects
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> PostProject([FromBody] ProjectDto projectDto)
+        public async Task<IActionResult> PostProject([FromBody] ProjectDto projectCreateDto)
         {
-            if (!ModelState.IsValid || projectDto == null)
+            if (!ModelState.IsValid || projectCreateDto == null)
             {
                 ResponseFactory.CreateErrorResponse(400, "No se pudo guardar el nuevo proyecto");
             }
 
-            Project projectModel = _mapper.Map<Project>(projectDto);
-            await _unitOfWork.ProjectsRepository.Create(projectModel);
+            Project project = _mapper.Map<Project>(projectCreateDto);
+            project.IsDeleted = false;
+            await _unitOfWork.ProjectsRepository.Create(project);
 
             return ResponseFactory.CreateSuccessResponse(201, "Nuevo proyecto guardado correctamente");  //CreatedAtRoute("GetProjectById", new { id = projectDto.ProjectId }, projectDto);
         }
@@ -98,21 +110,21 @@ namespace Tp.Integrador.Softtek.Controllers
         /// </summary>
         /// <returns>El proyecto se actualizó correctamente</returns>
         /// <param name="id">Id del proyecto a modificar</param>
-        /// <param name="projectDto">Datos del proyecto</param>
+        /// <param name="projectUpdateDto">Datos del proyecto</param>
         // PUT: api/Projects/1
         [HttpPut("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> PutProject([FromRoute] int id, [FromBody] ProjectDto projectDto)
+        public async Task<IActionResult> PutProject([FromRoute] int id, [FromBody] ProjectDto projectUpdateDto)
         {
-            if (projectDto == null || id != projectDto.ProjectId)
+            if (projectUpdateDto == null || id != projectUpdateDto.ProjectId)
             {
                 return ResponseFactory.CreateErrorResponse(400, "Los datos ingresados son incorrectos");
             }
 
-            Project projectModel = _mapper.Map<Project>(projectDto);
-            await _unitOfWork.ProjectsRepository.Update(projectModel);
+            Project project = _mapper.Map<Project>(projectUpdateDto);
+            await _unitOfWork.ProjectsRepository.Update(project);
 
             return ResponseFactory.CreateSuccessResponse(200, "El proyecto se actualizó correctamente");
         }
@@ -138,9 +150,9 @@ namespace Tp.Integrador.Softtek.Controllers
             var project = await _unitOfWork.ProjectsRepository.GetById(p => p.ProjectId == id);
             if (project != null)
             {
-                project.IsActive = false;
+                project.IsDeleted = true;
                 await _unitOfWork.ProjectsRepository.Delete(project);
-                return ResponseFactory.CreateSuccessResponse(200, "El proyecto se eliminó exitosamente");
+                return ResponseFactory.CreateSuccessResponse(200, "El proyecto se eliminó correctamente");
             }
 
             return ResponseFactory.CreateErrorResponse(404, "No se encontró el proyecto con ese código");

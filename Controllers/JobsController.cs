@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Tp.Integrador.Softtek.Entities;
+using Tp.Integrador.Softtek.Helpers;
 using Tp.Integrador.Softtek.Infrastructure;
 using Tp.Integrador.Softtek.Services;
 
@@ -34,14 +35,22 @@ namespace Tp.Integrador.Softtek.Controllers
         [Authorize]
         public async Task<IActionResult> GetAllJobs()
         {
-            IEnumerable<Job> jobsList = await _unitOfWork.JobsRepository.GetAll();
+            List<Job> jobsList = await _unitOfWork.JobsRepository.GetAll();
 
             if (jobsList == null)
             {
                 return ResponseFactory.CreateErrorResponse(404, "No se encontraron trabajos");
             }
 
-            return ResponseFactory.CreateSuccessResponse(200, jobsList);  //Ok(_mapper.Map<IEnumerable<JobDto>>(jobsList));
+            List<JobDto> jobsDtoList = _mapper.Map<List<JobDto>>(jobsList);
+
+            int pageToShow = 1;
+            if (Request.Query.ContainsKey("page")) int.TryParse(Request.Query["page"], out pageToShow);
+
+            var url = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}").ToString();
+            var paginateJobs = PaginateHelper.Paginate(jobsDtoList, pageToShow, url);
+
+            return ResponseFactory.CreateSuccessResponse(200, paginateJobs);
         }
 
         /// <summary>
@@ -62,10 +71,12 @@ namespace Tp.Integrador.Softtek.Controllers
                 return ResponseFactory.CreateErrorResponse(400, "Los datos ingresados son incorrectos");
             }
 
-            var job = await _unitOfWork.JobsRepository.GetById(j => j.JobId == id);
+            Job job = await _unitOfWork.JobsRepository.GetById(j => j.JobId == id);
+            JobDto jobDto = _mapper.Map<JobDto>(job);
+
             if (job != null)
             {
-                return ResponseFactory.CreateSuccessResponse(200, job);  //Ok(_mapper.Map<JobDto>(job));
+                return ResponseFactory.CreateSuccessResponse(200, jobDto);
             }
 
             return ResponseFactory.CreateErrorResponse(404, "No se encontró el trabajo con ese código");
@@ -75,21 +86,22 @@ namespace Tp.Integrador.Softtek.Controllers
         ///     Permite registrar un nuevo trabajo
         /// </summary>
         /// <returns>Nuevo trabajo guardado correctamente</returns>
-        /// <param name="jobDto">Datos del trabajo</param>
+        /// <param name="jobCreateDto">Datos del trabajo</param>
         // POST: api/Jobs
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> PostJob([FromBody] JobDto jobDto)
+        public async Task<IActionResult> PostJob([FromBody] JobCreateDto jobCreateDto)
         {
-            if (!ModelState.IsValid || jobDto == null)
+            if (!ModelState.IsValid || jobCreateDto == null)
             {
                 return ResponseFactory.CreateErrorResponse(400, "No se pudo guardar el nuevo trabajo");
             }
 
-            Job jobModel = _mapper.Map<Job>(jobDto);
-            await _unitOfWork.JobsRepository.Create(jobModel);
+            Job job = _mapper.Map<Job>(jobCreateDto);
+            job.IsDeleted = false;
+            await _unitOfWork.JobsRepository.Create(job);
 
             return ResponseFactory.CreateSuccessResponse(201, "Nuevo trabajo guardado correctamente");   //CreatedAtRoute("GetJobById", new { id = jobDto.JobId }, jobDto);
         }
@@ -99,21 +111,21 @@ namespace Tp.Integrador.Softtek.Controllers
         /// </summary>
         /// <returns>El trabajo se actualizó correctamente</returns>
         /// <param name="id">Id del trabajo a modificar</param>
-        /// <param name="jobDto">Datos del trabajo</param>
+        /// <param name="jobUpdateDto">Datos del trabajo</param>
         // PUT: api/Jobs/1
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> PutJob([FromRoute] int id, [FromBody] JobDto jobDto)
+        public async Task<IActionResult> PutJob([FromRoute] int id, [FromBody] JobUpdateDto jobUpdateDto)
         {
-            if (jobDto == null || id != jobDto.JobId)
+            if (jobUpdateDto == null || id != jobUpdateDto.JobId)
             {
                 return ResponseFactory.CreateErrorResponse(400, "Los datos ingresados son incorrectos");
             }
 
-            Job jobModel = _mapper.Map<Job>(jobDto);
-            await _unitOfWork.JobsRepository.Update(jobModel);
+            Job job = _mapper.Map<Job>(jobUpdateDto);
+            await _unitOfWork.JobsRepository.Update(job);
 
             return ResponseFactory.CreateSuccessResponse(200, "El trabajo se actualizó correctamente");
         }
@@ -139,9 +151,9 @@ namespace Tp.Integrador.Softtek.Controllers
             var job = await _unitOfWork.JobsRepository.GetById(j => j.JobId == id);
             if (job != null)
             {
-                job.IsActive = false;
+                job.IsDeleted = true;
                 await _unitOfWork.JobsRepository.Delete(job);
-                return ResponseFactory.CreateSuccessResponse(200, "El trabajo se eliminó exitosamente");
+                return ResponseFactory.CreateSuccessResponse(200, "El trabajo se eliminó correctamente");
             }
 
             return ResponseFactory.CreateErrorResponse(404, "No se encontró el trabajo con ese código");

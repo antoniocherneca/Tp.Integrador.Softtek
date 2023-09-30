@@ -18,7 +18,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Cost = 138.60,
                     ProjectId = 3,
                     ServiceId = 1,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Job
                 {
@@ -29,7 +29,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Cost = 1257.60,
                     ProjectId = 3,
                     ServiceId = 2,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Job
                 {
@@ -40,7 +40,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Cost = 369.60,
                     ProjectId = 3,
                     ServiceId = 3,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Job
                 {
@@ -51,7 +51,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Cost = 396.90,
                     ProjectId = 4,
                     ServiceId = 1,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Job
                 {
@@ -62,7 +62,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Cost = 718.75,
                     ProjectId = 4,
                     ServiceId = 2,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Job
                 {
@@ -73,7 +73,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Cost = 338.28,
                     ProjectId = 5,
                     ServiceId = 1,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Job
                 {
@@ -84,7 +84,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Cost = 387.47,
                     ProjectId = 5,
                     ServiceId = 2,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Job
                 {
@@ -95,7 +95,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Cost = 722.88,
                     ProjectId = 5,
                     ServiceId = 3,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Job
                 {
@@ -106,7 +106,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Cost = 560.04,
                     ProjectId = 5,
                     ServiceId = 4,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Job
                 {
@@ -117,7 +117,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Cost = 971.20,
                     ProjectId = 4,
                     ServiceId = 3,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Job
                 {
@@ -128,7 +128,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Cost = 471.20,
                     ProjectId = 4,
                     ServiceId = 4,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Job
                 {
@@ -139,7 +139,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Cost = 530.10,
                     ProjectId = 3,
                     ServiceId = 4,
-                    IsActive = true
+                    IsDeleted = false,
                 },
                 new Job
                 {
@@ -150,7 +150,7 @@ namespace Tp.Integrador.Softtek.DataAccess.DatabaseSeeding
                     Cost = 937.44,
                     ProjectId = 5,
                     ServiceId = 5,
-                    IsActive = true
+                    IsDeleted = false,
                 }
             );
         }
