@@ -91,6 +91,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> PostRole([FromBody] RoleDto roleCreateDto)
         {
@@ -116,6 +117,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> PutRole([FromRoute] int id, [FromBody] RoleUpdateDto roleUpdateDto)
         {
@@ -139,6 +141,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteRole([FromRoute] int id)

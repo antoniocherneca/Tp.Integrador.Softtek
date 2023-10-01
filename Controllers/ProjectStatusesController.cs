@@ -90,6 +90,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> PostProjectStatus([FromBody] ProjectStatusCreateDto projectStatusCreateDto)
         {
@@ -115,6 +116,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> PutProjectStatus([FromRoute] int id, [FromBody] ProjectStatusUpdateDto projectStatusUpdateDto)
         {
@@ -138,6 +140,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteProjectStatus([FromRoute] int id)

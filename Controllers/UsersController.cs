@@ -120,6 +120,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> PutUser([FromRoute] int id, [FromBody] UserUpdateDto userUpdateDto)
         {
@@ -143,6 +144,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteUser([FromRoute] int id)
@@ -172,6 +174,7 @@ namespace Tp.Integrador.Softtek.Controllers
         [HttpPost]
         [Route("Register")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [AllowAnonymous]
